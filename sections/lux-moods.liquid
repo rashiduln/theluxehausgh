@@ -1,0 +1,203 @@
+<section class="lux_section_root lux_band" id="lux-moods-{{ section.id }}">
+  <div class="lux_wrap">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="lux_section_title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.intro != blank -%}
+      <p class="lux_intro">{{ section.settings.intro }}</p>
+    {%- endif -%}
+
+    <div class="lux_moods">
+      <div class="lux_mood_col">
+        <h3 class="lux_mood_title">{{ section.settings.her_title | default: 'For her' }}</h3>
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.settings.line == 'her' -%}
+              <a class="lux_mood_link" href="{{ block.settings.link | default: '/collections/all?line=her' }}" {{ block.shopify_attributes }}>
+                <span>{{ block.settings.title }}</span>
+                <span class="lux_mood_count">{{ block.settings.count_text }}</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          <a class="lux_mood_link" href="/collections/all?line=her&mood=Fresh%20and%20clean">
+            <span>Fresh and clean</span>
+            <span class="lux_mood_count">2 scents</span>
+          </a>
+          <a class="lux_mood_link" href="/collections/all?line=her&mood=Soft%20and%20floral">
+            <span>Soft and floral</span>
+            <span class="lux_mood_count">4 scents</span>
+          </a>
+          <a class="lux_mood_link" href="/collections/all?line=her&mood=Warm%20and%20cozy">
+            <span>Warm and cozy</span>
+            <span class="lux_mood_count">1 scent</span>
+          </a>
+          <a class="lux_mood_link" href="/collections/all?line=her&mood=Bright%20and%20celebratory">
+            <span>Bright and celebratory</span>
+            <span class="lux_mood_count">2 scents</span>
+          </a>
+          <a class="lux_mood_link" href="/collections/all?line=her&mood=Bold%20and%20memorable">
+            <span>Bold and memorable</span>
+            <span class="lux_mood_count">2 scents</span>
+          </a>
+        {%- endif -%}
+      </div>
+
+      <div class="lux_mood_col">
+        <h3 class="lux_mood_title">{{ section.settings.him_title | default: 'For him' }}</h3>
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.settings.line == 'him' -%}
+              <a class="lux_mood_link" href="{{ block.settings.link | default: '/collections/all?line=him' }}" {{ block.shopify_attributes }}>
+                <span>{{ block.settings.title }}</span>
+                <span class="lux_mood_count">{{ block.settings.count_text }}</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          <a class="lux_mood_link" href="/collections/all?line=him&mood=Fresh%20and%20clean">
+            <span>Fresh and clean</span>
+            <span class="lux_mood_count">2 scents</span>
+          </a>
+          <a class="lux_mood_link" href="/collections/all?line=him&mood=Warm%20and%20grounded">
+            <span>Warm and grounded</span>
+            <span class="lux_mood_count">5 scents</span>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxé Scent Moods",
+  "tag": "section",
+  "class": "lux_section_moods_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by how a scent feels."
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro Paragraph",
+      "default": "Every scent here is asked for by name, tested on skin at six hours, and one we can restock when you come back for it."
+    },
+    {
+      "type": "text",
+      "id": "her_title",
+      "label": "Left Column Title",
+      "default": "For her"
+    },
+    {
+      "type": "text",
+      "id": "him_title",
+      "label": "Right Column Title",
+      "default": "For him"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mood_link",
+      "name": "Mood Link",
+      "settings": [
+        {
+          "type": "select",
+          "id": "line",
+          "label": "Column / Line",
+          "options": [
+            { "value": "her", "label": "For Her" },
+            { "value": "him", "label": "For Him" }
+          ],
+          "default": "her"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Mood Title",
+          "default": "Soft and floral"
+        },
+        {
+          "type": "text",
+          "id": "count_text",
+          "label": "Count Text",
+          "default": "4 scents"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Scent Moods",
+      "blocks": [
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Fresh and clean",
+            "count_text": "2 scents"
+          }
+        },
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Soft and floral",
+            "count_text": "4 scents"
+          }
+        },
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Warm and cozy",
+            "count_text": "1 scent"
+          }
+        },
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Bright and celebratory",
+            "count_text": "2 scents"
+          }
+        },
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Bold and memorable",
+            "count_text": "2 scents"
+          }
+        },
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "him",
+            "title": "Fresh and clean",
+            "count_text": "2 scents"
+          }
+        },
+        {
+          "type": "mood_link",
+          "settings": {
+            "line": "him",
+            "title": "Warm and grounded",
+            "count_text": "5 scents"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

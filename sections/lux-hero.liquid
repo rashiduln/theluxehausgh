@@ -1,0 +1,121 @@
+<section class="lux_section_root lux_hero" id="lux-hero-{{ section.id }}">
+  <div class="lux_wrap lux_hero_wrap">
+    <div class="lux_hero_content">
+      {%- if section.settings.heading != blank -%}
+        <h1 class="lux_hero_h1">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.lede != blank -%}
+        <p class="lux_hero_lede">{{ section.settings.lede }}</p>
+      {%- endif -%}
+
+      <div class="lux_actions">
+        {%- if section.settings.button_1_label != blank -%}
+          <a class="lux_btn_primary" href="{{ section.settings.button_1_link | default: '/collections/all' }}">
+            {{ section.settings.button_1_label }}
+          </a>
+        {%- endif -%}
+
+        {%- if section.settings.button_2_label != blank -%}
+          <a class="lux_btn_line" href="{{ section.settings.button_2_link | default: '/pages/house-call' }}">
+            {{ section.settings.button_2_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if section.settings.show_note -%}
+      <div class="lux_hero_note">
+        {%- if section.settings.note_title != blank -%}
+          <strong>{{ section.settings.note_title }}</strong>
+        {%- endif -%}
+        {{ section.settings.note_text }}
+        {%- if section.settings.note_link_label != blank -%}
+          <a href="{{ section.settings.note_link | default: '/pages/house-call' }}">{{ section.settings.note_link_label }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxé Hero",
+  "tag": "section",
+  "class": "lux_section_hero_wrapper",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The wash, the cream, the finish. Complete, or not at all."
+    },
+    {
+      "type": "textarea",
+      "id": "lede",
+      "label": "Lede Paragraph",
+      "default": "Sets of scent and care, sourced sealed and delivered across Ghana."
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Primary Button Label",
+      "default": "Shop all scents"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secondary Button Label",
+      "default": "Book a House Call"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Side Callout Note"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_note",
+      "label": "Show Note Box",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "note_title",
+      "label": "Note Title",
+      "default": "The House Call"
+    },
+    {
+      "type": "textarea",
+      "id": "note_text",
+      "label": "Note Text",
+      "default": "Prefer to smell it first? We bring the collection to you, anywhere in Accra. The GHS 50 fee counts toward anything you choose. "
+    },
+    {
+      "type": "text",
+      "id": "note_link_label",
+      "label": "Note Link Label",
+      "default": "Book yours"
+    },
+    {
+      "type": "url",
+      "id": "note_link",
+      "label": "Note Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Hero"
+    }
+  ]
+}
+{% endschema %}

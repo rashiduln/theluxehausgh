@@ -1,0 +1,282 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign line = product.metafields.custom.line | default: 'her'
+  assign mood = product.metafields.custom.mood | default: section.settings.default_mood
+  assign tone = product.metafields.custom.tone_color | default: section.settings.default_tone | default: '#3B2A24'
+  assign is_signature = product.metafields.custom.signature_available | default: section.settings.signature_available
+-%}
+
+<section class="lux_section_root lux_product_section" id="lux-product-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="lux_wrap lux_product">
+    
+    {%- comment -%} Left Column: Product Visual / Media {%- endcomment -%}
+    <div class="lux_product_gallery">
+      <div class="lux_product_swatch" style="background: linear-gradient(180deg, {{ tone }}, #0f0c0c);">
+        {%- if product.featured_image != blank -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 900 }}"
+            alt="{{ product.title | escape }}"
+            id="lux-featured-image-{{ section.id }}"
+            loading="eager"
+          >
+        {%- else -%}
+          {% render 'lux-bottle-icon', shape: 'wash' %}
+          {% render 'lux-bottle-icon', shape: 'cream' %}
+          {% render 'lux-bottle-icon', shape: 'spray' %}
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Right Column: Product Information & Form {%- endcomment -%}
+    <div class="lux_product_info">
+      <nav class="lux_crumbs" aria-label="Breadcrumbs">
+        <a href="{{ routes.root_url }}">Home</a> /
+        {%- if collection -%}
+          <a href="{{ collection.url }}">{{ collection.title }}</a> /
+        {%- elsif line == 'him' -%}
+          <a href="/collections/all?line=him">For him</a> /
+        {%- else -%}
+          <a href="/collections/all?line=her">For her</a> /
+        {%- endif -%}
+        {%- if mood != blank -%}
+          <a href="/collections/all?mood={{ mood | url_encode }}">{{ mood }}</a>
+        {%- else -%}
+          <span>{{ product.title }}</span>
+        {%- endif -%}
+      </nav>
+
+      <h1 class="lux_product_h1">{{ product.title }}</h1>
+
+      <p class="lux_mood_line">
+        {%- if mood != blank -%}
+          {{ mood }}.
+        {%- endif -%}
+        {%- if line == 'him' -%}
+          Wash, cream, and deodorizing body spray in one scent.
+        {%- else -%}
+          Wash, cream, and mist in one scent.
+        {%- endif -%}
+      </p>
+
+      {%- form 'product', product, id: 'lux-product-form', class: 'lux_product_form' -%}
+        <input type="hidden" name="id" id="lux-selected-variant-id" value="{{ current_variant.id }}">
+
+        {%- if product.has_only_default_variant == false -%}
+          <fieldset class="lux_portrait_options">
+            <legend class="lux_portrait_legend">Choose your portrait</legend>
+            {%- for variant in product.variants -%}
+              {%- liquid
+                assign is_checked = false
+                if variant.id == current_variant.id
+                  assign is_checked = true
+                endif
+                
+                assign sub_text = variant.metafields.custom.contents_description
+                if sub_text == blank
+                  if forloop.index == 1
+                    assign sub_text = "Wash, cream, and mist"
+                  elsif forloop.index == 2
+                    assign sub_text = "Wash, cream, mist, and exfoliating cloth"
+                  elsif forloop.index == 3
+                    assign sub_text = "Wash, cream, mist, exfoliating cloth, and room mist"
+                  else
+                    assign sub_text = variant.title
+                  endif
+                endif
+              -%}
+              <label class="lux_opt {% if is_checked %}lux_selected{% endif %}">
+                <input
+                  type="radio"
+                  name="lux_variant_choice"
+                  value="{{ variant.id }}"
+                  data-price="{{ variant.price | money }}"
+                  data-available="{{ variant.available }}"
+                  {% if is_checked %}checked{% endif %}
+                  onchange="document.getElementById('lux-selected-variant-id').value = this.value; document.querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');"
+                >
+                <span>
+                  <span class="lux_o_name">{{ variant.title }}</span>
+                  <span class="lux_o_contents">{{ sub_text }}</span>
+                </span>
+                <span class="lux_o_price">{{ variant.price | money }}</span>
+              </label>
+            {%- endfor -%}
+          </fieldset>
+        {%- else -%}
+          {%- comment -%} Fallback Portrait Tiers representation for Single Variant Product {%- endcomment -%}
+          <fieldset class="lux_portrait_options">
+            <legend class="lux_portrait_legend">Choose your portrait</legend>
+            <label class="lux_opt lux_selected">
+              <input type="radio" name="lux_portrait_tier" value="1" checked>
+              <span>
+                <span class="lux_o_name">{% if line == 'him' %}The Tailored Gentleman{% else %}The Polished Woman{% endif %}</span>
+                <span class="lux_o_contents">Wash, cream, and {% if line == 'him' %}body spray{% else %}mist{% endif %}</span>
+              </span>
+              <span class="lux_o_price">{{ product.price | money }}</span>
+            </label>
+          </fieldset>
+        {%- endif -%}
+
+        {%- unless is_signature -%}
+          <p class="lux_unavailable">
+            Signature isn't offered in {{ product.title }}, because there's no matching room mist. We only build a set when every piece is real.
+          </p>
+        {%- endunless -%}
+
+        <div class="lux_qty_row">
+          <div class="lux_qty" aria-label="Quantity">
+            <button type="button" id="lux-qty-minus" aria-label="Decrease quantity">&minus;</button>
+            <input type="number" id="lux-qty-input" name="quantity" value="1" min="1" max="99" aria-label="Quantity value">
+            <button type="button" id="lux-qty-plus" aria-label="Increase quantity">&#43;</button>
+          </div>
+
+          <button
+            type="submit"
+            name="add"
+            class="lux_btn_primary"
+            id="lux-add-to-cart-btn"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            {%- if current_variant.available -%}
+              Add to bag
+            {%- else -%}
+              Sold out
+            {%- endif -%}
+          </button>
+        </div>
+
+        <p class="lux_added" id="lux-added-msg" aria-live="polite"></p>
+      {%- endform -%}
+
+      {%- comment -%} Refills Collapsible {%- endcomment -%}
+      {%- if section.settings.show_refills -%}
+        <details class="lux_refill">
+          <summary>Already have this set? Refill a piece in {{ product.title }}.</summary>
+          <div class="lux_refill_body" style="margin-top: 14px;">
+            <fieldset class="lux_portrait_options">
+              <legend class="lux_portrait_legend">Choose a piece</legend>
+              <label class="lux_opt lux_selected">
+                <input type="radio" name="lux_refill_piece" value="wash" checked>
+                <span><span class="lux_o_name">Wash</span></span>
+                <span class="lux_o_price">GHS 250</span>
+              </label>
+              <label class="lux_opt">
+                <input type="radio" name="lux_refill_piece" value="cream">
+                <span><span class="lux_o_name">Cream</span></span>
+                <span class="lux_o_price">GHS 250</span>
+              </label>
+              <label class="lux_opt">
+                <input type="radio" name="lux_refill_piece" value="spray">
+                <span><span class="lux_o_name">{% if line == 'him' %}Deodorizing body spray{% else %}Mist{% endif %}</span></span>
+                <span class="lux_o_price">GHS 250</span>
+              </label>
+              <label class="lux_opt">
+                <input type="radio" name="lux_refill_piece" value="cloth">
+                <span><span class="lux_o_name">Exfoliating cloth</span></span>
+                <span class="lux_o_price">GHS 100</span>
+              </label>
+            </fieldset>
+            <button type="button" class="lux_btn_line" id="lux-refill-btn">Add refill to bag</button>
+            <p class="lux_added" id="lux-refill-msg" aria-live="polite"></p>
+          </div>
+        </details>
+      {%- endif -%}
+
+      {%- comment -%} Product Description & Editorial Notes {%- endcomment -%}
+      {%- if product.description != blank -%}
+        <div class="lux_product_description" style="margin-top: 24px; font-size: 18px; line-height: 1.6; color: var(--lux-ivory);">
+          {{ product.description }}
+        </div>
+      {%- endif -%}
+
+      <div class="lux_product_notes">
+        <p>Delivery within Accra is included. Outside Accra, sets travel by VIP bus.</p>
+        <p>Every set arrives wrapped, with a card. Check it when it arrives; if anything is damaged, incomplete, or not what you ordered, message us and we'll put it right.</p>
+        <p>Want to smell it first? <a href="/pages/house-call">Book a House Call</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const sectionEl = document.getElementById('lux-product-{{ section.id }}');
+    if (!sectionEl) return;
+
+    const minusBtn = sectionEl.querySelector('#lux-qty-minus');
+    const plusBtn = sectionEl.querySelector('#lux-qty-plus');
+    const qtyInput = sectionEl.querySelector('#lux-qty-input');
+    const addBtn = sectionEl.querySelector('#lux-add-to-cart-btn');
+    const form = sectionEl.querySelector('#lux-product-form');
+    const msgEl = sectionEl.querySelector('#lux-added-msg');
+
+    if (minusBtn && plusBtn && qtyInput) {
+      minusBtn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value, 10) || 1;
+        qtyInput.value = Math.max(1, val - 1);
+      });
+      plusBtn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value, 10) || 1;
+        qtyInput.value = Math.min(99, val + 1);
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        // Let standard form submit or handle with AJAX
+        if (msgEl) {
+          msgEl.innerHTML = `Set added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+        }
+      });
+    }
+
+    const refillBtn = sectionEl.querySelector('#lux-refill-btn');
+    const refillMsg = sectionEl.querySelector('#lux-refill-msg');
+    if (refillBtn && refillMsg) {
+      refillBtn.addEventListener('click', () => {
+        const checkedPiece = sectionEl.querySelector('input[name="lux_refill_piece"]:checked');
+        const pieceName = checkedPiece ? checkedPiece.parentElement.querySelector('.lux_o_name').textContent : 'Refill';
+        refillMsg.innerHTML = `${pieceName} refill added. <a href="{{ routes.cart_url }}">View bag</a>`;
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxé Product Main",
+  "tag": "section",
+  "class": "lux_product_section_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "default_mood",
+      "label": "Default Mood Text",
+      "default": "Soft and floral"
+    },
+    {
+      "type": "color",
+      "id": "default_tone",
+      "label": "Default Gradient Tone",
+      "default": "#3B2A24"
+    },
+    {
+      "type": "checkbox",
+      "id": "signature_available",
+      "label": "Signature Tier Available",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_refills",
+      "label": "Show Refills Option",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Product Main"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,93 @@
+<section class="lux_section_root lux_band lux_ladder_section" id="lux-portraits-{{ section.id }}" data-shop-url="{{ section.settings.shop_url | default: '/collections/all' }}">
+  <div class="lux_wrap">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="lux_section_title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.intro != blank -%}
+      <p class="lux_intro">{{ section.settings.intro }}</p>
+    {%- endif -%}
+
+    <div class="lux_switch" role="tablist" aria-label="Choose a line">
+      <button type="button" class="lux_switch_btn lux_active" role="tab" data-line="her" aria-selected="true">For her</button>
+      <button type="button" class="lux_switch_btn" role="tab" data-line="him" aria-selected="false">For him</button>
+    </div>
+
+    <div class="lux_ladder" role="tablist" aria-label="Portraits">
+      <button class="lux_step lux_active" role="tab" aria-selected="true" tabindex="0" data-index="0">
+        <span class="lux_icons">
+          {% render 'lux-bottle-icon', shape: 'wash' %}
+          {% render 'lux-bottle-icon', shape: 'cream' %}
+          {% render 'lux-bottle-icon', shape: 'spray' %}
+        </span>
+        <span class="lux_step_name">The Polished Woman</span>
+        <span class="lux_step_tier">The Everyday Standard</span>
+      </button>
+      <button class="lux_step" role="tab" aria-selected="false" tabindex="-1" data-index="1">
+        <span class="lux_icons">
+          {% render 'lux-bottle-icon', shape: 'wash' %}
+          {% render 'lux-bottle-icon', shape: 'cream' %}
+          {% render 'lux-bottle-icon', shape: 'spray' %}
+          {% render 'lux-bottle-icon', shape: 'cloth' %}
+        </span>
+        <span class="lux_step_name">The Poised Woman</span>
+        <span class="lux_step_tier">The Elevated Standard</span>
+      </button>
+      <button class="lux_step" role="tab" aria-selected="false" tabindex="-1" data-index="2">
+        <span class="lux_icons">
+          {% render 'lux-bottle-icon', shape: 'wash' %}
+          {% render 'lux-bottle-icon', shape: 'cream' %}
+          {% render 'lux-bottle-icon', shape: 'spray' %}
+          {% render 'lux-bottle-icon', shape: 'cloth' %}
+          {% render 'lux-bottle-icon', shape: 'room' %}
+        </span>
+        <span class="lux_step_name">The Distinguished Woman</span>
+        <span class="lux_step_tier">The Signature Standard</span>
+      </button>
+    </div>
+
+    <div class="lux_ladder_detail" aria-live="polite">
+      <div>
+        <p class="lux_quote">&ldquo;The baseline she does not negotiate.&rdquo;</p>
+        <p>Wash, cream, and mist.</p>
+        <p class="lux_muted">Available in 11 scents.</p>
+      </div>
+      <div>
+        <p class="lux_muted" style="margin: 0 0 14px;">From GHS 600, delivered in Accra.</p>
+        <a class="lux_btn_primary" href="{{ section.settings.shop_url | default: '/collections/all' }}?line=her&portrait=1">Shop The Polished Woman</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxé Portraits Ladder",
+  "tag": "section",
+  "class": "lux_section_ladder_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "We don't sell sizes. We name the person."
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro Paragraph",
+      "default": "Every set is complete at its own depth. Choose the portrait that sounds like you, or like the person you're buying for."
+    },
+    {
+      "type": "url",
+      "id": "shop_url",
+      "label": "Shop / Collection Base Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Portraits Ladder"
+    }
+  ]
+}
+{% endschema %}

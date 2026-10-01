@@ -1,0 +1,239 @@
+<section class="lux_section_root lux_band" id="lux-featured-scents-{{ section.id }}">
+  <div class="lux_wrap">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="lux_section_title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.intro != blank -%}
+      <p class="lux_intro">{{ section.settings.intro }}</p>
+    {%- endif -%}
+
+    <div class="lux_grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign product = block.settings.product
+            assign title = block.settings.title | default: product.title
+            assign meta = block.settings.meta
+            assign tone = block.settings.tone_color | default: '#3a2427'
+            assign price_text = block.settings.price_text
+            assign bottle_shape = block.settings.bottle_shape | default: 'spray'
+            assign url = block.settings.custom_link | default: product.url | default: '#'
+          -%}
+          <a class="lux_tile" href="{{ url }}" {{ block.shopify_attributes }}>
+            <div class="lux_swatch" style="background: linear-gradient(180deg, {{ tone }}, #0f0c0c);">
+              {%- if block.settings.custom_image != blank -%}
+                <img src="{{ block.settings.custom_image | image_url: width: 600 }}" alt="{{ title | escape }}" loading="lazy">
+              {%- else -%}
+                {% render 'lux-bottle-icon', shape: bottle_shape %}
+              {%- endif -%}
+            </div>
+            <p class="lux_t_name">{{ title }}</p>
+            {%- if meta != blank -%}
+              <p class="lux_t_meta">{{ meta }}</p>
+            {%- endif -%}
+            {%- if price_text != blank -%}
+              <p class="lux_t_price">{{ price_text }}</p>
+            {%- elsif product != blank -%}
+              <p class="lux_t_price">From {{ product.price_min | money }}</p>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+      {%- elsif section.settings.collection != blank -%}
+        {%- for product in section.settings.collection.products limit: section.settings.products_limit -%}
+          <a class="lux_tile" href="{{ product.url }}">
+            <div class="lux_swatch" style="background: linear-gradient(180deg, #35251a, #0f0c0c);">
+              {%- if product.featured_image != blank -%}
+                <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy">
+              {%- else -%}
+                {% render 'lux-bottle-icon', shape: 'spray' %}
+              {%- endif -%}
+            </div>
+            <p class="lux_t_name">{{ product.title }}</p>
+            {%- if product.metafields.custom.mood != blank -%}
+              <p class="lux_t_meta">{{ product.metafields.custom.mood }}</p>
+            {%- endif -%}
+            <p class="lux_t_price">From {{ product.price_min | money }}</p>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Default fallback showcase {%- endcomment -%}
+        <a class="lux_tile" href="/collections/all">
+          <div class="lux_swatch" style="background: linear-gradient(180deg, #3a2427, #0f0c0c);">
+            {% render 'lux-bottle-icon', shape: 'spray' %}
+          </div>
+          <p class="lux_t_name">Japanese Cherry Blossom</p>
+          <p class="lux_t_meta">Soft and floral</p>
+          <p class="lux_t_price">From GHS 600</p>
+        </a>
+        <a class="lux_tile" href="/collections/all">
+          <div class="lux_swatch" style="background: linear-gradient(180deg, #3a2226, #0f0c0c);">
+            {% render 'lux-bottle-icon', shape: 'spray' %}
+          </div>
+          <p class="lux_t_name">Rose</p>
+          <p class="lux_t_meta">Soft and floral</p>
+          <p class="lux_t_price">From GHS 600</p>
+        </a>
+        <a class="lux_tile" href="/collections/all">
+          <div class="lux_swatch" style="background: linear-gradient(180deg, #3d3122, #0f0c0c);">
+            {% render 'lux-bottle-icon', shape: 'spray' %}
+          </div>
+          <p class="lux_t_name">Champagne Toast</p>
+          <p class="lux_t_meta">Bright and celebratory. Signature available</p>
+          <p class="lux_t_price">From GHS 600</p>
+        </a>
+        <a class="lux_tile" href="/collections/all">
+          <div class="lux_swatch" style="background: linear-gradient(180deg, #3b2a1f, #0f0c0c);">
+            {% render 'lux-bottle-icon', shape: 'spray' %}
+          </div>
+          <p class="lux_t_name">Warm Vanilla Sugar</p>
+          <p class="lux_t_meta">Warm and cozy</p>
+          <p class="lux_t_price">From GHS 600</p>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxé Featured Scents",
+  "tag": "section",
+  "class": "lux_section_featured_scents_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Most reordered."
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro Subtitle",
+      "default": "The scents customers come back for."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection (Optional)"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Products limit",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "scent",
+      "name": "Scent Tile",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Scent / Product Name",
+          "default": "Japanese Cherry Blossom"
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Mood / Tagline",
+          "default": "Soft and floral"
+        },
+        {
+          "type": "text",
+          "id": "price_text",
+          "label": "Price Text",
+          "default": "From GHS 600"
+        },
+        {
+          "type": "color",
+          "id": "tone_color",
+          "label": "Swatch Gradient Tone",
+          "default": "#3A2427"
+        },
+        {
+          "type": "select",
+          "id": "bottle_shape",
+          "label": "Bottle Icon Shape",
+          "options": [
+            { "value": "wash", "label": "Wash" },
+            { "value": "cream", "label": "Cream" },
+            { "value": "spray", "label": "Spray / Mist" },
+            { "value": "cloth", "label": "Cloth" },
+            { "value": "room", "label": "Room Mist" }
+          ],
+          "default": "spray"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Image (Optional, replaces SVG)"
+        },
+        {
+          "type": "url",
+          "id": "custom_link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Featured Scents",
+      "blocks": [
+        {
+          "type": "scent",
+          "settings": {
+            "title": "Japanese Cherry Blossom",
+            "meta": "Soft and floral",
+            "price_text": "From GHS 600",
+            "tone_color": "#3A2427",
+            "bottle_shape": "spray"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "title": "Rose",
+            "meta": "Soft and floral",
+            "price_text": "From GHS 600",
+            "tone_color": "#3A2226",
+            "bottle_shape": "spray"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "title": "Champagne Toast",
+            "meta": "Bright and celebratory. Signature available",
+            "price_text": "From GHS 600",
+            "tone_color": "#3D3122",
+            "bottle_shape": "spray"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "title": "Warm Vanilla Sugar",
+            "meta": "Warm and cozy",
+            "price_text": "From GHS 600",
+            "tone_color": "#3B2A1F",
+            "bottle_shape": "spray"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

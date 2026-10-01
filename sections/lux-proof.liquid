@@ -1,0 +1,99 @@
+<section class="lux_section_root lux_band" id="lux-proof-{{ section.id }}">
+  <div class="lux_wrap">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="lux_section_title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    <div class="lux_proof">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <div class="lux_proof_col" {{ block.shopify_attributes }}>
+            {%- if block.settings.title != blank -%}
+              <h3 class="lux_proof_title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p class="lux_proof_text">{{ block.settings.text }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="lux_proof_col">
+          <h3 class="lux_proof_title">Sourced sealed</h3>
+          <p class="lux_proof_text">Every piece arrives from the source sealed, with its batch code, and is inspected before it's listed.</p>
+        </div>
+        <div class="lux_proof_col">
+          <h3 class="lux_proof_title">Checked at your door</h3>
+          <p class="lux_proof_text">Pay securely by mobile money or card, then check your set when it arrives. If anything is damaged, incomplete, or not what you ordered, message us and we'll put it right.</p>
+        </div>
+        <div class="lux_proof_col">
+          <h3 class="lux_proof_title">Delivered across Ghana</h3>
+          <p class="lux_proof_text">Delivery within Accra is included. Outside Accra, sets travel by VIP bus, and the station fee is paid on pickup.</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxé Proof & Delivery",
+  "tag": "section",
+  "class": "lux_section_proof_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How every order arrives."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Pillar Title",
+          "default": "Sourced sealed"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Pillar Description",
+          "default": "Every piece arrives from the source sealed, with its batch code, and is inspected before it's listed."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Proof & Delivery",
+      "blocks": [
+        {
+          "type": "pillar",
+          "settings": {
+            "title": "Sourced sealed",
+            "text": "Every piece arrives from the source sealed, with its batch code, and is inspected before it's listed."
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "title": "Checked at your door",
+            "text": "Pay securely by mobile money or card, then check your set when it arrives. If anything is damaged, incomplete, or not what you ordered, message us and we'll put it right."
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "title": "Delivered across Ghana",
+            "text": "Delivery within Accra is included. Outside Accra, sets travel by VIP bus, and the station fee is paid on pickup."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

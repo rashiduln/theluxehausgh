@@ -1,285 +1,315 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */{
+{
   "sections": {
-    "hero_jVaWmY": {
-      "type": "hero",
+    "lux_hero": {
+      "type": "lux-hero",
+      "settings": {
+        "heading": "The wash, the cream, the finish. Complete, or not at all.",
+        "lede": "Sets of scent and care, sourced sealed and delivered across Ghana.",
+        "button_1_label": "Shop all scents",
+        "button_1_link": "/collections/all",
+        "button_2_label": "Book a House Call",
+        "button_2_link": "/pages/house-call",
+        "show_note": true,
+        "note_title": "The House Call",
+        "note_text": "Prefer to smell it first? We bring the collection to you, anywhere in Accra. The GHS 50 fee counts toward anything you choose. ",
+        "note_link_label": "Book yours",
+        "note_link": "/pages/house-call"
+      }
+    },
+    "lux_featured_scents": {
+      "type": "lux-featured-scents",
       "blocks": {
-        "text_YLPk4p": {
-          "type": "text",
-          "name": "t:names.heading",
+        "scent_1": {
+          "type": "scent",
           "settings": {
-            "text": "<p>Browse our latest products</p>",
-            "text_color": "{{ settings.color_palette.background }}",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "title": "Japanese Cherry Blossom",
+            "meta": "Soft and floral",
+            "price_text": "From GHS 600",
+            "tone_color": "#3A2427",
+            "bottle_shape": "spray"
+          }
         },
-        "button_H9gpTf": {
-          "type": "button",
-          "name": "t:names.button",
+        "scent_2": {
+          "type": "scent",
           "settings": {
-            "label": "Shop all",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "style_class": "button-custom",
-            "custom_button_background": "rgba(0,0,0,0)",
-            "custom_button_text": "{{ settings.color_palette.background }}",
-            "custom_button_border": "{{ settings.color_palette.background }}",
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100
-          },
-          "blocks": {}
+            "title": "Rose",
+            "meta": "Soft and floral",
+            "price_text": "From GHS 600",
+            "tone_color": "#3A2226",
+            "bottle_shape": "spray"
+          }
+        },
+        "scent_3": {
+          "type": "scent",
+          "settings": {
+            "title": "Champagne Toast",
+            "meta": "Bright and celebratory. Signature available",
+            "price_text": "From GHS 600",
+            "tone_color": "#3D3122",
+            "bottle_shape": "spray"
+          }
+        },
+        "scent_4": {
+          "type": "scent",
+          "settings": {
+            "title": "Warm Vanilla Sugar",
+            "meta": "Warm and cozy",
+            "price_text": "From GHS 600",
+            "tone_color": "#3B2A1F",
+            "bottle_shape": "spray"
+          }
         }
       },
       "block_order": [
-        "text_YLPk4p",
-        "button_H9gpTf"
+        "scent_1",
+        "scent_2",
+        "scent_3",
+        "scent_4"
       ],
-      "name": "t:names.hero",
       "settings": {
-        "media_type_1": "image",
-        "media_type_2": "image",
-        "stack_media_on_mobile": false,
-        "custom_mobile_media": false,
-        "media_type_1_mobile": "image",
-        "media_type_2_mobile": "image",
-        "open_in_new_tab": false,
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "space-between",
-        "vertical_alignment": "flex-end",
-        "align_baseline": true,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "flex-end",
-        "gap": 24,
-        "section_width": "page-width",
-        "section_height": "medium",
-        "section_height_custom": 50,
-        "background_color": "rgba(0,0,0,0)",
-        "toggle_overlay": true,
-        "overlay_color": "#12121266",
-        "overlay_style": "solid",
-        "gradient_direction": "to bottom",
-        "blurred_reflection": false,
-        "reflection_opacity": 75,
-        "padding-block-start": 100,
-        "padding-block-end": 72
+        "heading": "Most reordered.",
+        "intro": "The scents customers come back for."
       }
     },
-    "product_list_fa6P9H": {
-      "type": "product-list",
+    "lux_house_call": {
+      "type": "lux-house-call",
+      "settings": {
+        "heading": "The House Call.",
+        "description": "Most people won't buy a scent they haven't smelled. We don't expect you to. Book a House Call and we bring the collection to your home or office, anywhere in Accra. Smell the scents, try the cream, and choose in person.",
+        "fee_note": "GHS 50 to book, and it counts in full toward anything you choose.",
+        "button_label": "Book a House Call",
+        "button_link": "/pages/house-call"
+      }
+    },
+    "lux_three_forms": {
+      "type": "lux-three-forms",
       "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "name": "t:names.header",
-          "static": true,
+        "piece_1": {
+          "type": "piece",
           "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "align_baseline": true,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "width": "fill",
-            "custom_width": 100,
-            "width_mobile": "fill",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "custom_height": 100,
-            "background_media": "none",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_list_text_YFtzcL": {
-              "type": "_product-list-text",
-              "name": "t:names.collection_title",
-              "settings": {
-                "text": "<h3>{{ closest.collection.title }}</h3>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h4",
-                "font": "var(--font-body--family)",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_list_button_MWeP9V": {
-              "type": "_product-list-button",
-              "name": "t:names.product_list_button",
-              "settings": {
-                "label": "View all",
-                "open_in_new_tab": false,
-                "style_class": "link",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_list_text_YFtzcL",
-            "product_list_button_MWeP9V"
-          ]
+            "bottle_shape": "wash",
+            "title": "The wash",
+            "description": "Starts it. The first layer of scent, and it cleans without fighting what comes next."
+          }
         },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
+        "piece_2": {
+          "type": "piece",
           "settings": {
-            "product_card_gap": 4,
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_card_gallery_677WP3": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_title_YXxMTj": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "price_JQzVV4": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "h6",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_677WP3",
-            "product_title_YXxMTj",
-            "price_JQzVV4"
-          ]
+            "bottle_shape": "cream",
+            "title": "The cream",
+            "description": "Holds it. Fragrance lasts on moisturized skin, so the cream carries the scent through the day."
+          }
+        },
+        "piece_3": {
+          "type": "piece",
+          "settings": {
+            "bottle_shape": "spray",
+            "title": "The mist or body spray",
+            "description": "Finishes it. The part people notice. Mist for her. For him, a deodorizing body spray: scent and freshness that hold up in the heat."
+          }
         }
       },
-      "name": "t:names.product_list",
+      "block_order": [
+        "piece_1",
+        "piece_2",
+        "piece_3"
+      ],
       "settings": {
-        "collection": "all",
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "max_products": 8,
-        "columns": 4,
-        "mobile_columns": "2",
-        "mobile_card_size": "60cqw",
-        "columns_gap": 8,
-        "rows_gap": 24,
-        "icons_style": "arrow",
-        "icons_shape": "none",
-        "section_width": "page-width",
-        "horizontal_alignment": "flex-start",
-        "gap": 28,
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "heading": "One scent, three forms, each with a job.",
+        "intro": "Most sellers sell the mist on its own, and it fades by afternoon. Every set in this house starts with all three, because the scent only lasts when they work together."
+      }
+    },
+    "lux_ladder": {
+      "type": "lux-ladder",
+      "settings": {
+        "heading": "We don't sell sizes. We name the person.",
+        "intro": "Every set is complete at its own depth. Choose the portrait that sounds like you, or like the person you're buying for.",
+        "shop_url": "/collections/all"
+      }
+    },
+    "lux_moods": {
+      "type": "lux-moods",
+      "blocks": {
+        "mood_1": {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Fresh and clean",
+            "count_text": "2 scents"
+          }
+        },
+        "mood_2": {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Soft and floral",
+            "count_text": "4 scents"
+          }
+        },
+        "mood_3": {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Warm and cozy",
+            "count_text": "1 scent"
+          }
+        },
+        "mood_4": {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Bright and celebratory",
+            "count_text": "2 scents"
+          }
+        },
+        "mood_5": {
+          "type": "mood_link",
+          "settings": {
+            "line": "her",
+            "title": "Bold and memorable",
+            "count_text": "2 scents"
+          }
+        },
+        "mood_6": {
+          "type": "mood_link",
+          "settings": {
+            "line": "him",
+            "title": "Fresh and clean",
+            "count_text": "2 scents"
+          }
+        },
+        "mood_7": {
+          "type": "mood_link",
+          "settings": {
+            "line": "him",
+            "title": "Warm and grounded",
+            "count_text": "5 scents"
+          }
+        }
+      },
+      "block_order": [
+        "mood_1",
+        "mood_2",
+        "mood_3",
+        "mood_4",
+        "mood_5",
+        "mood_6",
+        "mood_7"
+      ],
+      "settings": {
+        "heading": "Shop by how a scent feels.",
+        "intro": "Every scent here is asked for by name, tested on skin at six hours, and one we can restock when you come back for it.",
+        "her_title": "For her",
+        "him_title": "For him"
+      }
+    },
+    "lux_cloth": {
+      "type": "lux-exfoliating-cloth",
+      "settings": {
+        "heading": "The part of the routine that does the work.",
+        "description": "Our exfoliating cloth is woven net, finished with African print. It clears the skin before the wash, so everything after it lands better. It comes in every Elevated and Signature set, and it's the first piece that carries our own name.",
+        "muted_note": "Rinse after use and hang to dry. Replace every three months."
+      }
+    },
+    "lux_gifts": {
+      "type": "lux-gift-showcase",
+      "blocks": {
+        "gift_1": {
+          "type": "gift_tile",
+          "settings": {
+            "title": "Mahogany Teakwood",
+            "meta": "Warm and grounded. Signature available",
+            "price_text": "From GHS 600",
+            "tone_color": "#34211A",
+            "bottle_shape": "spray"
+          }
+        },
+        "gift_2": {
+          "type": "gift_tile",
+          "settings": {
+            "title": "Champagne Toast",
+            "meta": "Bright and celebratory. Signature available",
+            "price_text": "From GHS 600",
+            "tone_color": "#3D3122",
+            "bottle_shape": "spray"
+          }
+        },
+        "gift_3": {
+          "type": "gift_tile",
+          "settings": {
+            "title": "The Trio Gift Set",
+            "meta": "For him",
+            "price_text": "GHS 600",
+            "tone_color": "#2E231C",
+            "bottle_shape": "spray"
+          }
+        }
+      },
+      "block_order": [
+        "gift_1",
+        "gift_2",
+        "gift_3"
+      ],
+      "settings": {
+        "heading": "A gift that says something about the giver.",
+        "intro": "Every set arrives wrapped. Add a card message at checkout.",
+        "footnote": "The Distinguished Gentleman in Mahogany Teakwood and The Distinguished Woman in Champagne Toast. His warm and deep, hers bright. Two scents made to stand next to each other."
+      }
+    },
+    "lux_proof": {
+      "type": "lux-proof",
+      "blocks": {
+        "pillar_1": {
+          "type": "pillar",
+          "settings": {
+            "title": "Sourced sealed",
+            "text": "Every piece arrives from the source sealed, with its batch code, and is inspected before it's listed."
+          }
+        },
+        "pillar_2": {
+          "type": "pillar",
+          "settings": {
+            "title": "Checked at your door",
+            "text": "Pay securely by mobile money or card, then check your set when it arrives. If anything is damaged, incomplete, or not what you ordered, message us and we'll put it right."
+          }
+        },
+        "pillar_3": {
+          "type": "pillar",
+          "settings": {
+            "title": "Delivered across Ghana",
+            "text": "Delivery within Accra is included. Outside Accra, sets travel by VIP bus, and the station fee is paid on pickup."
+          }
+        }
+      },
+      "block_order": [
+        "pillar_1",
+        "pillar_2",
+        "pillar_3"
+      ],
+      "settings": {
+        "heading": "How every order arrives."
+      }
+    },
+    "lux_story": {
+      "type": "lux-story",
+      "settings": {
+        "heading": "Founded in Ghana to answer a market that deserved better.",
+        "paragraph_1": "Better quality, better trust, and a standard that had simply never been offered. We are building what didn't exist.",
+        "paragraph_2": "We are not the loudest store in Ghana. We are not the cheapest, and we never will be. What we are is certain. Certain of what we carry, of how it arrives, and of the people we built this for.",
+        "seal": "Luxury is demonstrated, not declared."
       }
     }
   },
   "order": [
-    "hero_jVaWmY",
-    "product_list_fa6P9H"
+    "lux_hero",
+    "lux_featured_scents",
+    "lux_house_call",
+    "lux_three_forms",
+    "lux_ladder",
+    "lux_moods",
+    "lux_cloth",
+    "lux_gifts",
+    "lux_proof",
+    "lux_story"
   ]
 }

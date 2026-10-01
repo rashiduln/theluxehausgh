@@ -1,0 +1,75 @@
+<section class="lux_section_root lux_band lux_housecall" id="lux-house-call-{{ section.id }}">
+  <div class="lux_wrap lux_hc">
+    <div class="lux_hc_content">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lux_section_title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.description != blank -%}
+        <p>{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.fee_note != blank -%}
+        <p class="lux_muted">{{ section.settings.fee_note }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <a class="lux_btn_primary" href="{{ section.settings.button_link | default: '/pages/house-call' }}">
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="lux_hc_art" aria-hidden="true">
+      {% render 'lux-bottle-icon', shape: 'wash' %}
+      {% render 'lux-bottle-icon', shape: 'cream' %}
+      {% render 'lux-bottle-icon', shape: 'spray' %}
+      {% render 'lux-bottle-icon', shape: 'cloth' %}
+      {% render 'lux-bottle-icon', shape: 'room' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxé House Call",
+  "tag": "section",
+  "class": "lux_section_house_call_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The House Call."
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Most people won't buy a scent they haven't smelled. We don't expect you to. Book a House Call and we bring the collection to your home or office, anywhere in Accra. Smell the scents, try the cream, and choose in person."
+    },
+    {
+      "type": "textarea",
+      "id": "fee_note",
+      "label": "Fee Note",
+      "default": "GHS 50 to book, and it counts in full toward anything you choose."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Book a House Call"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé House Call"
+    }
+  ]
+}
+{% endschema %}
