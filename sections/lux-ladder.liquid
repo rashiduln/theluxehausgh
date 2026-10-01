@@ -1,4 +1,4 @@
-<section class="lux_section_root lux_band lux_ladder_section" id="lux-portraits-{{ section.id }}" data-shop-url="{{ section.settings.shop_url | default: '/collections/all' }}">
+<section class="lux_section_root lux_band lux_ladder_section" id="lux-portraits-{{ section.id }}" data-section-id="{{ section.id }}">
   <div class="lux_wrap">
     {%- if section.settings.heading != blank -%}
       <h2 class="lux_section_title">{{ section.settings.heading }}</h2>
@@ -9,53 +9,107 @@
     {%- endif -%}
 
     <div class="lux_switch" role="tablist" aria-label="Choose a line">
-      <button type="button" class="lux_switch_btn lux_active" role="tab" data-line="her" aria-selected="true">For her</button>
-      <button type="button" class="lux_switch_btn" role="tab" data-line="him" aria-selected="false">For him</button>
-    </div>
-
-    <div class="lux_ladder" role="tablist" aria-label="Portraits">
-      <button class="lux_step lux_active" role="tab" aria-selected="true" tabindex="0" data-index="0">
-        <span class="lux_icons">
-          {% render 'lux-bottle-icon', shape: 'wash' %}
-          {% render 'lux-bottle-icon', shape: 'cream' %}
-          {% render 'lux-bottle-icon', shape: 'spray' %}
-        </span>
-        <span class="lux_step_name">The Polished Woman</span>
-        <span class="lux_step_tier">The Everyday Standard</span>
+      <button type="button" class="lux_switch_btn lux_active" role="tab" data-line="{{ section.settings.tab_1_line_key | default: 'her' }}" aria-selected="true">
+        {{ section.settings.tab_1_label | default: 'For her' }}
       </button>
-      <button class="lux_step" role="tab" aria-selected="false" tabindex="-1" data-index="1">
-        <span class="lux_icons">
-          {% render 'lux-bottle-icon', shape: 'wash' %}
-          {% render 'lux-bottle-icon', shape: 'cream' %}
-          {% render 'lux-bottle-icon', shape: 'spray' %}
-          {% render 'lux-bottle-icon', shape: 'cloth' %}
-        </span>
-        <span class="lux_step_name">The Poised Woman</span>
-        <span class="lux_step_tier">The Elevated Standard</span>
-      </button>
-      <button class="lux_step" role="tab" aria-selected="false" tabindex="-1" data-index="2">
-        <span class="lux_icons">
-          {% render 'lux-bottle-icon', shape: 'wash' %}
-          {% render 'lux-bottle-icon', shape: 'cream' %}
-          {% render 'lux-bottle-icon', shape: 'spray' %}
-          {% render 'lux-bottle-icon', shape: 'cloth' %}
-          {% render 'lux-bottle-icon', shape: 'room' %}
-        </span>
-        <span class="lux_step_name">The Distinguished Woman</span>
-        <span class="lux_step_tier">The Signature Standard</span>
+      <button type="button" class="lux_switch_btn" role="tab" data-line="{{ section.settings.tab_2_line_key | default: 'him' }}" aria-selected="false">
+        {{ section.settings.tab_2_label | default: 'For him' }}
       </button>
     </div>
 
-    <div class="lux_ladder_detail" aria-live="polite">
-      <div>
-        <p class="lux_quote">&ldquo;The baseline she does not negotiate.&rdquo;</p>
-        <p>Wash, cream, and mist.</p>
-        <p class="lux_muted">Available in 11 scents.</p>
-      </div>
-      <div>
-        <p class="lux_muted" style="margin: 0 0 14px;">From GHS 600, delivered in Accra.</p>
-        <a class="lux_btn_primary" href="{{ section.settings.shop_url | default: '/collections/all' }}?line=her&portrait=1">Shop The Polished Woman</a>
-      </div>
+    {%- assign line_1 = section.settings.tab_1_line_key | default: 'her' -%}
+    {%- assign line_2 = section.settings.tab_2_line_key | default: 'him' -%}
+
+    {%- comment -%} Container for all line groups {%- endcomment -%}
+    <div class="lux_ladder_container">
+      {%- for line_key in (1..2) -%}
+        {%- liquid
+          if line_key == 1
+            assign current_line = line_1
+            assign is_active_line = true
+          else
+            assign current_line = line_2
+            assign is_active_line = false
+          endif
+        -%}
+        <div class="lux_ladder_group {% unless is_active_line %}lux_hidden{% endunless %}" data-line="{{ current_line }}">
+          <div class="lux_ladder" role="tablist" aria-label="Portraits for {{ current_line }}">
+            {%- assign step_count = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.settings.line == current_line -%}
+                {%- assign step_count = step_count | plus: 1 -%}
+                {%- assign is_first_step = false -%}
+                {%- if step_count == 1 -%}{%- assign is_first_step = true -%}{%- endif -%}
+
+                <button
+                  class="lux_step {% if is_first_step %}lux_active{% endif %}"
+                  role="tab"
+                  aria-selected="{% if is_first_step %}true{% else %}false{% endif %}"
+                  tabindex="{% if is_first_step %}0{% else %}-1{% endif %}"
+                  data-index="{{ step_count | minus: 1 }}"
+                  data-quote="{{ block.settings.quote | escape }}"
+                  data-pieces="{{ block.settings.pieces_description | escape }}"
+                  data-availability="{{ block.settings.availability_text | escape }}"
+                  data-price="{{ block.settings.price_text | escape }}"
+                  data-btn-label="{{ block.settings.button_label | escape }}"
+                  data-btn-link="{{ block.settings.button_link | default: '/collections/all' }}"
+                  {{ block.shopify_attributes }}
+                >
+                  <span class="lux_icons">
+                    {%- if block.settings.show_wash -%}
+                      {% render 'lux-bottle-icon', shape: 'wash' %}
+                    {%- endif -%}
+                    {%- if block.settings.show_cream -%}
+                      {% render 'lux-bottle-icon', shape: 'cream' %}
+                    {%- endif -%}
+                    {%- if block.settings.show_spray -%}
+                      {% render 'lux-bottle-icon', shape: 'spray' %}
+                    {%- endif -%}
+                    {%- if block.settings.show_cloth -%}
+                      {% render 'lux-bottle-icon', shape: 'cloth' %}
+                    {%- endif -%}
+                    {%- if block.settings.show_room -%}
+                      {% render 'lux-bottle-icon', shape: 'room' %}
+                    {%- endif -%}
+                  </span>
+                  <span class="lux_step_name">{{ block.settings.name }}</span>
+                  <span class="lux_step_tier">{{ block.settings.label }}</span>
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- comment -%} Initial Server-rendered detail box for this line {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            {%- if block.settings.line == current_line -%}
+              <div class="lux_ladder_detail" aria-live="polite">
+                <div>
+                  {%- if block.settings.quote != blank -%}
+                    <p class="lux_quote">&ldquo;{{ block.settings.quote }}&rdquo;</p>
+                  {%- endif -%}
+                  {%- if block.settings.pieces_description != blank -%}
+                    <p class="lux_pieces_text">{{ block.settings.pieces_description }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.availability_text != blank -%}
+                    <p class="lux_muted lux_avail_text">{{ block.settings.availability_text }}</p>
+                  {%- endif -%}
+                </div>
+                <div>
+                  {%- if block.settings.price_text != blank -%}
+                    <p class="lux_muted lux_price_text" style="margin: 0 0 14px;">{{ block.settings.price_text }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.button_label != blank -%}
+                    <a class="lux_btn_primary lux_action_btn" href="{{ block.settings.button_link | default: '/collections/all' }}">
+                      {{ block.settings.button_label }}
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
     </div>
   </div>
 </section>
@@ -79,14 +133,246 @@
       "default": "Every set is complete at its own depth. Choose the portrait that sounds like you, or like the person you're buying for."
     },
     {
-      "type": "url",
-      "id": "shop_url",
-      "label": "Shop / Collection Base Link"
+      "type": "header",
+      "content": "Line Tabs"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_label",
+      "label": "Tab 1 Label",
+      "default": "For her"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_line_key",
+      "label": "Tab 1 Identifier Key",
+      "default": "her"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_label",
+      "label": "Tab 2 Label",
+      "default": "For him"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_line_key",
+      "label": "Tab 2 Identifier Key",
+      "default": "him"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "portrait",
+      "name": "Portrait Tier",
+      "settings": [
+        {
+          "type": "select",
+          "id": "line",
+          "label": "Line",
+          "options": [
+            { "value": "her", "label": "For Her" },
+            { "value": "him", "label": "For Him" }
+          ],
+          "default": "her"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Portrait Name",
+          "default": "The Polished Woman"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Tier Sub-label",
+          "default": "The Everyday Standard"
+        },
+        {
+          "type": "text",
+          "id": "quote",
+          "label": "Quote / Tagline",
+          "default": "The baseline she does not negotiate."
+        },
+        {
+          "type": "text",
+          "id": "pieces_description",
+          "label": "Pieces Description",
+          "default": "Wash, cream, and mist."
+        },
+        {
+          "type": "text",
+          "id": "availability_text",
+          "label": "Availability Text",
+          "default": "Available in 11 scents."
+        },
+        {
+          "type": "text",
+          "id": "price_text",
+          "label": "Price Text",
+          "default": "From GHS 600, delivered in Accra."
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "Shop The Polished Woman"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        },
+        {
+          "type": "header",
+          "content": "Bottle Icons Displayed"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_wash",
+          "label": "Show Wash Icon",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_cream",
+          "label": "Show Cream Icon",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_spray",
+          "label": "Show Mist / Body Spray Icon",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_cloth",
+          "label": "Show Exfoliating Cloth Icon",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_room",
+          "label": "Show Room Mist Icon",
+          "default": false
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Luxé Portraits Ladder"
+      "name": "Luxé Portraits Ladder",
+      "blocks": [
+        {
+          "type": "portrait",
+          "settings": {
+            "line": "her",
+            "name": "The Polished Woman",
+            "label": "The Everyday Standard",
+            "quote": "The baseline she does not negotiate.",
+            "pieces_description": "Wash, cream, and mist.",
+            "availability_text": "Available in 11 scents.",
+            "price_text": "From GHS 600, delivered in Accra.",
+            "button_label": "Shop The Polished Woman",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": false,
+            "show_room": false
+          }
+        },
+        {
+          "type": "portrait",
+          "settings": {
+            "line": "her",
+            "name": "The Poised Woman",
+            "label": "The Elevated Standard",
+            "quote": "Chosen, not collected.",
+            "pieces_description": "Wash, cream, mist, and exfoliating cloth.",
+            "availability_text": "Available in 11 scents.",
+            "price_text": "From GHS 700, delivered in Accra.",
+            "button_label": "Shop The Poised Woman",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": false
+          }
+        },
+        {
+          "type": "portrait",
+          "settings": {
+            "line": "her",
+            "name": "The Distinguished Woman",
+            "label": "The Signature Standard",
+            "quote": "Complete, on her terms.",
+            "pieces_description": "Wash, cream, mist, exfoliating cloth, and room mist.",
+            "availability_text": "Available in Champagne Toast, where a matching room mist exists.",
+            "price_text": "From GHS 900, delivered in Accra.",
+            "button_label": "Shop The Distinguished Woman",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": true
+          }
+        },
+        {
+          "type": "portrait",
+          "settings": {
+            "line": "him",
+            "name": "The Tailored Gentleman",
+            "label": "The Grounded Routine",
+            "quote": "Confidence begins with consistency.",
+            "pieces_description": "Wash, cream, and deodorizing body spray.",
+            "availability_text": "Available in 7 scents.",
+            "price_text": "From GHS 600, delivered in Accra.",
+            "button_label": "Shop The Tailored Gentleman",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": false,
+            "show_room": false
+          }
+        },
+        {
+          "type": "portrait",
+          "settings": {
+            "line": "him",
+            "name": "The Refined Gentleman",
+            "label": "The Composed Routine",
+            "quote": "Refinement is noticed long before it's announced.",
+            "pieces_description": "Wash, cream, deodorizing body spray, and exfoliating cloth.",
+            "availability_text": "Available in 7 scents.",
+            "price_text": "From GHS 700, delivered in Accra.",
+            "button_label": "Shop The Refined Gentleman",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": false
+          }
+        },
+        {
+          "type": "portrait",
+          "settings": {
+            "line": "him",
+            "name": "The Distinguished Gentleman",
+            "label": "The Complete Routine",
+            "quote": "Nothing excessive. Nothing overlooked.",
+            "pieces_description": "Wash, cream, deodorizing body spray, exfoliating cloth, and room mist.",
+            "availability_text": "Available in Mahogany Teakwood, where a matching room mist exists.",
+            "price_text": "From GHS 900, delivered in Accra.",
+            "button_label": "Shop The Distinguished Gentleman",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": true
+          }
+        }
+      ]
     }
   ]
 }

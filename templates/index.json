@@ -121,10 +121,137 @@
     },
     "lux_ladder": {
       "type": "lux-ladder",
+      "blocks": {
+        "portrait_her_1": {
+          "type": "portrait",
+          "settings": {
+            "line": "her",
+            "name": "The Polished Woman",
+            "label": "The Everyday Standard",
+            "quote": "The baseline she does not negotiate.",
+            "pieces_description": "Wash, cream, and mist.",
+            "availability_text": "Available in 11 scents.",
+            "price_text": "From GHS 600, delivered in Accra.",
+            "button_label": "Shop The Polished Woman",
+            "button_link": "/collections/all?line=her&portrait=1",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": false,
+            "show_room": false
+          }
+        },
+        "portrait_her_2": {
+          "type": "portrait",
+          "settings": {
+            "line": "her",
+            "name": "The Poised Woman",
+            "label": "The Elevated Standard",
+            "quote": "Chosen, not collected.",
+            "pieces_description": "Wash, cream, mist, and exfoliating cloth.",
+            "availability_text": "Available in 11 scents.",
+            "price_text": "From GHS 700, delivered in Accra.",
+            "button_label": "Shop The Poised Woman",
+            "button_link": "/collections/all?line=her&portrait=2",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": false
+          }
+        },
+        "portrait_her_3": {
+          "type": "portrait",
+          "settings": {
+            "line": "her",
+            "name": "The Distinguished Woman",
+            "label": "The Signature Standard",
+            "quote": "Complete, on her terms.",
+            "pieces_description": "Wash, cream, mist, exfoliating cloth, and room mist.",
+            "availability_text": "Available in Champagne Toast, where a matching room mist exists.",
+            "price_text": "From GHS 900, delivered in Accra.",
+            "button_label": "Shop The Distinguished Woman",
+            "button_link": "/collections/all?line=her&signature=1&portrait=3",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": true
+          }
+        },
+        "portrait_him_1": {
+          "type": "portrait",
+          "settings": {
+            "line": "him",
+            "name": "The Tailored Gentleman",
+            "label": "The Grounded Routine",
+            "quote": "Confidence begins with consistency.",
+            "pieces_description": "Wash, cream, and deodorizing body spray.",
+            "availability_text": "Available in 7 scents.",
+            "price_text": "From GHS 600, delivered in Accra.",
+            "button_label": "Shop The Tailored Gentleman",
+            "button_link": "/collections/all?line=him&portrait=1",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": false,
+            "show_room": false
+          }
+        },
+        "portrait_him_2": {
+          "type": "portrait",
+          "settings": {
+            "line": "him",
+            "name": "The Refined Gentleman",
+            "label": "The Composed Routine",
+            "quote": "Refinement is noticed long before it's announced.",
+            "pieces_description": "Wash, cream, deodorizing body spray, and exfoliating cloth.",
+            "availability_text": "Available in 7 scents.",
+            "price_text": "From GHS 700, delivered in Accra.",
+            "button_label": "Shop The Refined Gentleman",
+            "button_link": "/collections/all?line=him&portrait=2",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": false
+          }
+        },
+        "portrait_him_3": {
+          "type": "portrait",
+          "settings": {
+            "line": "him",
+            "name": "The Distinguished Gentleman",
+            "label": "The Complete Routine",
+            "quote": "Nothing excessive. Nothing overlooked.",
+            "pieces_description": "Wash, cream, deodorizing body spray, exfoliating cloth, and room mist.",
+            "availability_text": "Available in Mahogany Teakwood, where a matching room mist exists.",
+            "price_text": "From GHS 900, delivered in Accra.",
+            "button_label": "Shop The Distinguished Gentleman",
+            "button_link": "/collections/all?line=him&signature=1&portrait=3",
+            "show_wash": true,
+            "show_cream": true,
+            "show_spray": true,
+            "show_cloth": true,
+            "show_room": true
+          }
+        }
+      },
+      "block_order": [
+        "portrait_her_1",
+        "portrait_her_2",
+        "portrait_her_3",
+        "portrait_him_1",
+        "portrait_him_2",
+        "portrait_him_3"
+      ],
       "settings": {
         "heading": "We don't sell sizes. We name the person.",
         "intro": "Every set is complete at its own depth. Choose the portrait that sounds like you, or like the person you're buying for.",
-        "shop_url": "/collections/all"
+        "tab_1_label": "For her",
+        "tab_1_line_key": "her",
+        "tab_2_label": "For him",
+        "tab_2_line_key": "him"
       }
     },
     "lux_moods": {

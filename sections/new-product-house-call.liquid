@@ -1,0 +1,194 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign tone = section.settings.tone_color | default: '#452A24'
+-%}
+
+<section class="lux_section_root lux_product_section" id="lux-house-call-product-{{ section.id }}">
+  <div class="lux_wrap lux_product">
+    
+    {%- comment -%} Left Column: Visual Swatch / Media {%- endcomment -%}
+    <div class="lux_product_gallery">
+      <div class="lux_product_swatch" style="background: linear-gradient(180deg, {{ tone }}, #0f0c0c);">
+        {%- if product.featured_image != blank -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 900 }}"
+            alt="{{ product.title | escape }}"
+            loading="eager"
+          >
+        {%- else -%}
+          {% render 'lux-bottle-icon', shape: 'wash' %}
+          {% render 'lux-bottle-icon', shape: 'cream' %}
+          {% render 'lux-bottle-icon', shape: 'spray' %}
+          {% render 'lux-bottle-icon', shape: 'room' %}
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Right Column: House Call Booking Details & Form {%- endcomment -%}
+    <div class="lux_product_info">
+      <p class="lux_crumbs">{{ section.settings.location_badge | default: 'Accra only' }}</p>
+      
+      <h1 class="lux_product_h1">{{ product.title }}</h1>
+      
+      {%- if section.settings.tagline != blank -%}
+        <p class="lux_mood_line">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+
+      {%- if product.description != blank -%}
+        <div class="lux_product_description" style="margin-bottom: 24px; font-size: 19px; line-height: 1.6; color: var(--lux-ivory);">
+          {{ product.description }}
+        </div>
+      {%- else -%}
+        <p style="font-size: 19px; line-height: 1.6; color: var(--lux-ivory); margin-bottom: 24px;">
+          We bring the collection to your home or office anywhere in Accra. Smell the scents, try the cream on your skin, and choose in person. The House Call is {{ product.price | money }}, paid now to confirm the visit, and it counts in full toward anything you choose.
+        </p>
+      {%- endif -%}
+
+      {%- form 'product', product, id: 'lux-house-call-form', class: 'lux_form' -%}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+        <div class="lux_field" id="lux-field-name">
+          <label for="lux-hc-name">Full name</label>
+          <input id="lux-hc-name" type="text" name="properties[Full Name]" autocomplete="name" required>
+        </div>
+
+        <div class="lux_field" id="lux-field-phone">
+          <label for="lux-hc-phone">Phone number</label>
+          <input id="lux-hc-phone" type="tel" name="properties[Phone Number]" autocomplete="tel" required>
+          <span class="lux_hint">We'll confirm your House Call time on WhatsApp.</span>
+        </div>
+
+        <div class="lux_two_cols">
+          <div class="lux_field" id="lux-field-area">
+            <label for="lux-hc-area">Area or neighbourhood</label>
+            <input id="lux-hc-area" type="text" name="properties[Area / Neighbourhood]" autocomplete="address-level2" required>
+            <span class="lux_hint">Within Accra.</span>
+          </div>
+
+          <div class="lux_field" id="lux-field-day">
+            <label for="lux-hc-day">Preferred day</label>
+            <input id="lux-hc-day" type="text" name="properties[Preferred Day]" placeholder="e.g. Saturday afternoon" required>
+          </div>
+        </div>
+
+        <button
+          class="lux_btn_primary"
+          type="submit"
+          id="lux-hc-submit-btn"
+          style="width: 100%; margin-top: 10px;"
+          {% unless current_variant.available %}disabled{% endunless %}
+        >
+          {%- if current_variant.available -%}
+            Pay {{ product.price | money }} and book your House Call
+          {%- else -%}
+            Unavailable
+          {%- endif -%}
+        </button>
+
+        <p class="lux_form_error lux_hidden" id="lux-hc-form-error" role="alert">
+          Some details are missing. Please check the fields marked above.
+        </p>
+      {%- endform -%}
+
+      <div class="lux_product_notes" style="margin-top: 30px;">
+        <p>If you choose a set during your House Call, the {{ product.price | money }} comes off its price and you pay the rest online.</p>
+        <p>Questions? Message our concierge on <a href="https://wa.me/233559100626" target="_blank" rel="noopener">WhatsApp</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const form = document.getElementById('lux-house-call-form');
+    if (!form) return;
+
+    const errorMsg = document.getElementById('lux-hc-form-error');
+
+    form.addEventListener('submit', function (e) {
+      let isValid = true;
+      let firstInvalid = null;
+
+      const fields = [
+        { id: 'lux-hc-name', label: 'full name' },
+        { id: 'lux-hc-phone', label: 'phone number', isPhone: true },
+        { id: 'lux-hc-area', label: 'area' },
+        { id: 'lux-hc-day', label: 'preferred day' }
+      ];
+
+      fields.forEach(function (f) {
+        const input = document.getElementById(f.id);
+        if (!input) return;
+        const parent = input.closest('.lux_field');
+        const val = input.value.trim();
+        let err = '';
+
+        // Reset previous errors
+        if (parent) {
+          parent.classList.remove('lux_invalid');
+          const oldErr = parent.querySelector('.lux_err');
+          if (oldErr) oldErr.remove();
+        }
+
+        if (!val) {
+          err = `Please enter your ${f.label}.`;
+        } else if (f.isPhone && val.replace(/\D/g, '').length < 9) {
+          err = 'Please enter a valid phone number (e.g. 024 123 4567).';
+        }
+
+        if (err) {
+          isValid = false;
+          if (parent) {
+            parent.classList.add('lux_invalid');
+            const errSpan = document.createElement('span');
+            errSpan.className = 'lux_err';
+            errSpan.textContent = err;
+            parent.appendChild(errSpan);
+          }
+          if (!firstInvalid) firstInvalid = input;
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+        if (errorMsg) errorMsg.classList.remove('lux_hidden');
+        if (firstInvalid) firstInvalid.focus();
+      } else {
+        if (errorMsg) errorMsg.classList.add('lux_hidden');
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxé House Call Service",
+  "tag": "section",
+  "class": "lux_house_call_product_wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "location_badge",
+      "label": "Location Badge",
+      "default": "Accra only"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Smell it before you choose. The collection comes to you."
+    },
+    {
+      "type": "color",
+      "id": "tone_color",
+      "label": "Swatch Gradient Tone",
+      "default": "#452A24"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé House Call Service"
+    }
+  ]
+}
+{% endschema %}

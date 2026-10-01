@@ -971,3 +971,76 @@
     position: static;
   }
 }
+
+/* ==========================================================================
+   12. Form Fields (House Call Booking & Custom Product Inputs)
+   ========================================================================== */
+.lux_form {
+  margin-top: 24px;
+}
+
+.lux_field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.lux_field label {
+  font-size: 17px;
+  color: var(--lux-ivory);
+}
+
+.lux_field .lux_hint {
+  font-size: 15px;
+  color: var(--lux-muted);
+}
+
+.lux_field input,
+.lux_field select,
+.lux_field textarea {
+  background: var(--lux-panel);
+  border: 1px solid var(--lux-rule);
+  color: var(--lux-ivory);
+  padding: 11px 12px;
+  font-size: 18px;
+  font-family: var(--lux-text);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.lux_field input:focus,
+.lux_field select:focus,
+.lux_field textarea:focus {
+  outline: none;
+  border-color: var(--lux-ember);
+}
+
+.lux_field .lux_err {
+  color: var(--lux-error);
+  font-size: 15px;
+}
+
+.lux_field.lux_invalid input,
+.lux_field.lux_invalid select {
+  border-color: var(--lux-error);
+}
+
+.lux_two_cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.lux_form_error {
+  color: var(--lux-error);
+  margin: 10px 0 0;
+  font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .lux_two_cols {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
