@@ -17,7 +17,7 @@
         "button_1_label": "Shop all scents",
         "button_1_link": "shopify://collections/bundle-products",
         "button_2_label": "Book a House Call",
-        "button_2_link": "/pages/house-call",
+        "button_2_link": "shopify://products/the-house-call",
         "show_note": true,
         "note_title": "The House Call",
         "note_text": "Prefer to smell it first? We bring the collection to you, anywhere in Accra. The GHS 50 fee counts toward anything you choose.",
@@ -361,7 +361,8 @@
       "settings": {
         "heading": "The part of the routine that does the work.",
         "description": "Our exfoliating cloth is woven net, finished with African print. It clears the skin before the wash, so everything after it lands better. It comes in every Elevated and Signature set, and it's the first piece that carries our own name.",
-        "muted_note": "Rinse after use and hang to dry. Replace every three months."
+        "muted_note": "Rinse after use and hang to dry. Replace every three months.",
+        "custom_image": "shopify://shop_images/vanilla-ease-set.png"
       }
     },
     "lux_gifts": {
