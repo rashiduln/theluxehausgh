@@ -980,7 +980,7 @@
 }
 
 .lux_field {
-  display: grid;
+  display: block;
   gap: 6px;
   margin-bottom: 16px;
 }
