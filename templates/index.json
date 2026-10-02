@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "lux_hero": {
@@ -11,7 +20,7 @@
         "button_2_link": "/pages/house-call",
         "show_note": true,
         "note_title": "The House Call",
-        "note_text": "Prefer to smell it first? We bring the collection to you, anywhere in Accra. The GHS 50 fee counts toward anything you choose. ",
+        "note_text": "Prefer to smell it first? We bring the collection to you, anywhere in Accra. The GHS 50 fee counts toward anything you choose.",
         "note_link_label": "Book yours",
         "note_link": "/pages/house-call"
       }
@@ -22,41 +31,49 @@
         "scent_1": {
           "type": "scent",
           "settings": {
+            "product": "",
             "title": "Japanese Cherry Blossom",
             "meta": "Soft and floral",
             "price_text": "From GHS 600",
-            "tone_color": "#3A2427",
-            "bottle_shape": "spray"
+            "tone_color": "#3a2427",
+            "bottle_shape": "spray",
+            "custom_link": ""
           }
         },
         "scent_2": {
           "type": "scent",
           "settings": {
+            "product": "",
             "title": "Rose",
             "meta": "Soft and floral",
             "price_text": "From GHS 600",
-            "tone_color": "#3A2226",
-            "bottle_shape": "spray"
+            "tone_color": "#3a2226",
+            "bottle_shape": "spray",
+            "custom_link": ""
           }
         },
         "scent_3": {
           "type": "scent",
           "settings": {
+            "product": "",
             "title": "Champagne Toast",
             "meta": "Bright and celebratory. Signature available",
             "price_text": "From GHS 600",
-            "tone_color": "#3D3122",
-            "bottle_shape": "spray"
+            "tone_color": "#3d3122",
+            "bottle_shape": "spray",
+            "custom_link": ""
           }
         },
         "scent_4": {
           "type": "scent",
           "settings": {
+            "product": "",
             "title": "Warm Vanilla Sugar",
             "meta": "Warm and cozy",
             "price_text": "From GHS 600",
-            "tone_color": "#3B2A1F",
-            "bottle_shape": "spray"
+            "tone_color": "#3b2a1f",
+            "bottle_shape": "spray",
+            "custom_link": ""
           }
         }
       },
@@ -68,7 +85,9 @@
       ],
       "settings": {
         "heading": "Most reordered.",
-        "intro": "The scents customers come back for."
+        "intro": "The scents customers come back for.",
+        "collection": "",
+        "products_limit": 4
       }
     },
     "lux_house_call": {
@@ -78,7 +97,7 @@
         "description": "Most people won't buy a scent they haven't smelled. We don't expect you to. Book a House Call and we bring the collection to your home or office, anywhere in Accra. Smell the scents, try the cream, and choose in person.",
         "fee_note": "GHS 50 to book, and it counts in full toward anything you choose.",
         "button_label": "Book a House Call",
-        "button_link": "/pages/house-call"
+        "button_link": "shopify://products/the-house-call"
       }
     },
     "lux_three_forms": {
@@ -262,7 +281,8 @@
           "settings": {
             "line": "her",
             "title": "Fresh and clean",
-            "count_text": "2 scents"
+            "count_text": "2 scents",
+            "link": ""
           }
         },
         "mood_2": {
@@ -270,7 +290,8 @@
           "settings": {
             "line": "her",
             "title": "Soft and floral",
-            "count_text": "4 scents"
+            "count_text": "4 scents",
+            "link": ""
           }
         },
         "mood_3": {
@@ -278,7 +299,8 @@
           "settings": {
             "line": "her",
             "title": "Warm and cozy",
-            "count_text": "1 scent"
+            "count_text": "1 scent",
+            "link": ""
           }
         },
         "mood_4": {
@@ -286,7 +308,8 @@
           "settings": {
             "line": "her",
             "title": "Bright and celebratory",
-            "count_text": "2 scents"
+            "count_text": "2 scents",
+            "link": ""
           }
         },
         "mood_5": {
@@ -294,7 +317,8 @@
           "settings": {
             "line": "her",
             "title": "Bold and memorable",
-            "count_text": "2 scents"
+            "count_text": "2 scents",
+            "link": ""
           }
         },
         "mood_6": {
@@ -302,7 +326,8 @@
           "settings": {
             "line": "him",
             "title": "Fresh and clean",
-            "count_text": "2 scents"
+            "count_text": "2 scents",
+            "link": ""
           }
         },
         "mood_7": {
@@ -310,7 +335,8 @@
           "settings": {
             "line": "him",
             "title": "Warm and grounded",
-            "count_text": "5 scents"
+            "count_text": "5 scents",
+            "link": ""
           }
         }
       },
@@ -344,31 +370,37 @@
         "gift_1": {
           "type": "gift_tile",
           "settings": {
+            "product": "",
             "title": "Mahogany Teakwood",
             "meta": "Warm and grounded. Signature available",
             "price_text": "From GHS 600",
-            "tone_color": "#34211A",
-            "bottle_shape": "spray"
+            "tone_color": "#34211a",
+            "bottle_shape": "spray",
+            "link": ""
           }
         },
         "gift_2": {
           "type": "gift_tile",
           "settings": {
+            "product": "",
             "title": "Champagne Toast",
             "meta": "Bright and celebratory. Signature available",
             "price_text": "From GHS 600",
-            "tone_color": "#3D3122",
-            "bottle_shape": "spray"
+            "tone_color": "#3d3122",
+            "bottle_shape": "spray",
+            "link": ""
           }
         },
         "gift_3": {
           "type": "gift_tile",
           "settings": {
+            "product": "",
             "title": "The Trio Gift Set",
             "meta": "For him",
             "price_text": "GHS 600",
-            "tone_color": "#2E231C",
-            "bottle_shape": "spray"
+            "tone_color": "#2e231c",
+            "bottle_shape": "spray",
+            "link": ""
           }
         }
       },
