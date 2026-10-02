@@ -1,90 +1,466 @@
 {
   "sections": {
     "main": {
-      "type": "new-product",
-      "settings": {
-        "default_mood": "Soft and floral",
-        "default_tone": "#3B2A24",
-        "signature_available": false,
-        "show_refills": true
-      }
-    },
-    "lux_three_forms": {
-      "type": "lux-three-forms",
+      "type": "product-information",
       "blocks": {
-        "piece_1": {
-          "type": "piece",
+        "disclosures_g9mWze": {
+          "type": "disclosures",
+          "name": "t:names.disclosures",
           "settings": {
-            "bottle_shape": "wash",
-            "title": "The wash",
-            "description": "Starts it. The first layer of scent, and it cleans without fighting what comes next."
-          }
+            "heading": "Disclosures",
+            "heading_preset": "h5",
+            "open_by_default": false,
+            "icon": "caret",
+            "disclosure_heading_preset": "h6",
+            "text_color": "",
+            "dividers": true,
+            "divider_color": "{{ settings.color_palette.color2 }}",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
-        "piece_2": {
-          "type": "piece",
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true,
           "settings": {
-            "bottle_shape": "cream",
-            "title": "The cream",
-            "description": "Holds it. Fragrance lasts on moisturized skin, so the cream carries the scent through the day."
-          }
+            "media_presentation": "grid",
+            "media_columns": "two",
+            "image_gap": 4,
+            "large_first_image": false,
+            "slideshow_controls_style": "counter",
+            "slideshow_mobile_controls_style": "dots",
+            "thumbnail_position": "right",
+            "thumbnail_width": 44,
+            "thumbnail_radius": 0,
+            "aspect_ratio": "adapt",
+            "constrain_to_viewport": true,
+            "media_fit": "contain",
+            "media_radius": 0,
+            "extend_media": false,
+            "zoom": true,
+            "video_loop": false,
+            "hide_variants": true,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
-        "piece_3": {
-          "type": "piece",
+        "product-details": {
+          "type": "_product-details",
+          "static": true,
           "settings": {
-            "bottle_shape": "spray",
-            "title": "The mist or body spray",
-            "description": "Finishes it. The part people notice. Mist for her. For him, a deodorizing body spray: scent and freshness that hold up in the heat."
-          }
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "details_position": "flex-start",
+            "gap": 28,
+            "sticky_details_desktop": true,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 24,
+            "padding-block-end": 24,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "group_icgrde": {
+              "type": "group",
+              "name": "t:names.header",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_xrnftG": {
+                  "type": "text",
+                  "name": "t:names.product_title",
+                  "settings": {
+                    "text": "<h1>{{ closest.product.title }}</h1>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h3",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "price_tVjtKg": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "show_installments": false,
+                    "show_tax_info": false,
+                    "type_preset": "paragraph",
+                    "width": "100%",
+                    "alignment": "left",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "text_color": "",
+                    "padding-block-start": 4,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_xrnftG",
+                "price_tVjtKg"
+              ]
+            },
+            "divider_VJhene": {
+              "type": "_divider",
+              "name": "t:names.divider",
+              "settings": {
+                "thickness": 1,
+                "corner_radius": "square",
+                "divider_color": "{{ settings.color_palette.color2 }}",
+                "width_percent": 100,
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "variant_picker_R3rGDr": {
+              "type": "variant-picker",
+              "settings": {
+                "variant_style": "buttons",
+                "show_swatches": false,
+                "option_label_text_color": "",
+                "variant_style_class": "default",
+                "custom_variant_background": "{{ settings.color_palette.background }}",
+                "custom_variant_text": "{{ settings.color_palette.foreground }}",
+                "custom_variant_border": "{{ settings.color_palette.foreground }}",
+                "selected_variant_style_class": "default",
+                "custom_selected_variant_background": "{{ settings.color_palette.foreground }}",
+                "custom_selected_variant_text": "{{ settings.color_palette.background }}",
+                "custom_selected_variant_border": "{{ settings.color_palette.foreground }}",
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "buy_buttons_eYQEYi": {
+              "type": "buy-buttons",
+              "settings": {
+                "stacking": true,
+                "text_color": "",
+                "show_pickup_availability": false,
+                "gift_card_form": true,
+                "recipient_button_style": "default",
+                "recipient_button_background": "{{ settings.color_palette.background }}",
+                "recipient_button_text": "{{ settings.color_palette.foreground }}",
+                "recipient_button_border": "{{ settings.color_palette.foreground }}",
+                "selected_recipient_button_style": "default",
+                "selected_recipient_button_background": "{{ settings.color_palette.foreground }}",
+                "selected_recipient_button_text": "{{ settings.color_palette.background }}",
+                "selected_recipient_button_border": "{{ settings.color_palette.foreground }}",
+                "input_style": "default",
+                "input_background_color": "{{ settings.color_palette.background }}",
+                "input_text_color": "{{ settings.color_palette.foreground }}",
+                "input_border_color": "{{ settings.color_palette.foreground }}",
+                "border_width": 1,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "quantity": {
+                  "type": "quantity",
+                  "static": true,
+                  "settings": {
+                    "input_style": "default",
+                    "input_background_color": "{{ settings.color_palette.background }}",
+                    "input_text_color": "{{ settings.color_palette.foreground }}",
+                    "input_border_color": "{{ settings.color_palette.foreground }}",
+                    "border_width": 1,
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                },
+                "add-to-cart": {
+                  "type": "add-to-cart",
+                  "static": true,
+                  "settings": {
+                    "style_class": "button",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}"
+                  },
+                  "blocks": {}
+                },
+                "accelerated-checkout": {
+                  "type": "accelerated-checkout",
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                }
+              },
+              "block_order": []
+            },
+            "text_aEtTtq": {
+              "type": "text",
+              "name": "t:names.product_description",
+              "settings": {
+                "text": "{{ closest.product.description }}",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "group_icgrde",
+            "divider_VJhene",
+            "variant_picker_R3rGDr",
+            "buy_buttons_eYQEYi",
+            "text_aEtTtq"
+          ]
         }
       },
       "block_order": [
-        "piece_1",
-        "piece_2",
-        "piece_3"
+        "disclosures_g9mWze"
       ],
       "settings": {
-        "heading": "One scent, three forms, each with a job.",
-        "intro": "Most sellers sell the mist on its own, and it fades by afternoon. Every set in this house starts with all three, because the scent only lasts when they work together."
+        "content_width": "content-center-aligned",
+        "desktop_media_position": "left",
+        "equal_columns": false,
+        "limit_details_width": false,
+        "gap": 48,
+        "enable_sticky_add_to_cart": true,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
-    "lux_proof": {
-      "type": "lux-proof",
+    "product_recommendations_qggXJq": {
+      "type": "product-recommendations",
       "blocks": {
-        "pillar_1": {
-          "type": "pillar",
+        "text_cbcgyb": {
+          "type": "text",
+          "name": "t:names.header",
           "settings": {
-            "title": "Sourced sealed",
-            "text": "Every piece arrives from the source sealed, with its batch code, and is inspected before it's listed."
-          }
+            "text": "<h3>You may also like </h3>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h4",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
-        "pillar_2": {
-          "type": "pillar",
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
           "settings": {
-            "title": "Checked at your door",
-            "text": "Pay securely by mobile money or card, then check your set when it arrives. If anything is damaged, incomplete, or not what you ordered, message us and we'll put it right."
-          }
-        },
-        "pillar_3": {
-          "type": "pillar",
-          "settings": {
-            "title": "Delivered across Ghana",
-            "text": "Delivery within Accra is included. Outside Accra, sets travel by VIP bus, and the station fee is paid on pickup."
-          }
+            "product_card_gap": 8,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 8,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_card_gallery_DNizbJ": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_title_M7MJkb": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price_gLWgA6": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product_card_gallery_DNizbJ",
+            "product_title_M7MJkb",
+            "price_gLWgA6"
+          ]
         }
       },
       "block_order": [
-        "pillar_1",
-        "pillar_2",
-        "pillar_3"
+        "text_cbcgyb"
       ],
+      "name": "t:names.product_recommendations",
       "settings": {
-        "heading": "How every order arrives."
+        "product": "{{ closest.product }}",
+        "recommendation_type": "related",
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "max_products": 4,
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 12,
+        "rows_gap": 24,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 28,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 48,
+        "padding-block-end": 48
       }
     }
   },
   "order": [
     "main",
-    "lux_three_forms",
-    "lux_proof"
+    "product_recommendations_qggXJq"
   ]
 }

@@ -1,0 +1,90 @@
+{
+  "sections": {
+    "main": {
+      "type": "new-product",
+      "settings": {
+        "default_mood": "Soft and floral",
+        "default_tone": "#3B2A24",
+        "signature_available": false,
+        "show_refills": true
+      }
+    },
+    "lux_three_forms": {
+      "type": "lux-three-forms",
+      "blocks": {
+        "piece_1": {
+          "type": "piece",
+          "settings": {
+            "bottle_shape": "wash",
+            "title": "The wash",
+            "description": "Starts it. The first layer of scent, and it cleans without fighting what comes next."
+          }
+        },
+        "piece_2": {
+          "type": "piece",
+          "settings": {
+            "bottle_shape": "cream",
+            "title": "The cream",
+            "description": "Holds it. Fragrance lasts on moisturized skin, so the cream carries the scent through the day."
+          }
+        },
+        "piece_3": {
+          "type": "piece",
+          "settings": {
+            "bottle_shape": "spray",
+            "title": "The mist or body spray",
+            "description": "Finishes it. The part people notice. Mist for her. For him, a deodorizing body spray: scent and freshness that hold up in the heat."
+          }
+        }
+      },
+      "block_order": [
+        "piece_1",
+        "piece_2",
+        "piece_3"
+      ],
+      "settings": {
+        "heading": "One scent, three forms, each with a job.",
+        "intro": "Most sellers sell the mist on its own, and it fades by afternoon. Every set in this house starts with all three, because the scent only lasts when they work together."
+      }
+    },
+    "lux_proof": {
+      "type": "lux-proof",
+      "blocks": {
+        "pillar_1": {
+          "type": "pillar",
+          "settings": {
+            "title": "Sourced sealed",
+            "text": "Every piece arrives from the source sealed, with its batch code, and is inspected before it's listed."
+          }
+        },
+        "pillar_2": {
+          "type": "pillar",
+          "settings": {
+            "title": "Checked at your door",
+            "text": "Pay securely by mobile money or card, then check your set when it arrives. If anything is damaged, incomplete, or not what you ordered, message us and we'll put it right."
+          }
+        },
+        "pillar_3": {
+          "type": "pillar",
+          "settings": {
+            "title": "Delivered across Ghana",
+            "text": "Delivery within Accra is included. Outside Accra, sets travel by VIP bus, and the station fee is paid on pickup."
+          }
+        }
+      },
+      "block_order": [
+        "pillar_1",
+        "pillar_2",
+        "pillar_3"
+      ],
+      "settings": {
+        "heading": "How every order arrives."
+      }
+    }
+  },
+  "order": [
+    "main",
+    "lux_three_forms",
+    "lux_proof"
+  ]
+}
