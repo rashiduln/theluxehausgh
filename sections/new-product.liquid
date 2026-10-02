@@ -259,7 +259,7 @@
         {%- else -%}
           {%- comment -%} Single Variant / Non-variant Bundle Product {%- endcomment -%}
           {%- liquid
-            assign single_set_items = product.metafields.custom.product_sets.value | default: product.metafields.custom.product_sets
+            assign single_set_items = product.metafields.custom.product_sets.value | default: product.selected_or_first_available_variant.metafields.custom.product_sets
             assign single_sub_text_parts = ''
             if single_set_items.first != blank or single_set_items.size > 0
               for piece in single_set_items
