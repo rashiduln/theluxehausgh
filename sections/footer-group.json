@@ -180,12 +180,12 @@
         "social_links_Ew63Kq": {
           "type": "social-links",
           "settings": {
-            "icon_color": "",
-            "facebook_url": "https://www.facebook.com/",
-            "instagram_url": "https://www.instagram.com/",
-            "youtube_url": "https://www.youtube.com/",
-            "tiktok_url": "https://www.tiktok.com/",
-            "twitter_url": "https://x.com/",
+            "icon_color": "{{ settings.color_palette.color4 }}",
+            "facebook_url": "",
+            "instagram_url": "https://instagram.com/theluxehausgh",
+            "youtube_url": "",
+            "tiktok_url": "",
+            "twitter_url": "",
             "threads_url": "",
             "linkedin_url": "",
             "bluesky_url": "",
@@ -193,7 +193,7 @@
             "pinterest_url": "",
             "tumblr_url": "",
             "vimeo_url": "",
-            "custom_url": ""
+            "custom_url": "https://wa.me/233559100626"
           },
           "blocks": {}
         }
