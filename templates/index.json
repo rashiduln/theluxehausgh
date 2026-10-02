@@ -86,7 +86,7 @@
       "settings": {
         "heading": "Most reordered.",
         "intro": "The scents customers come back for.",
-        "collection": "",
+        "collection": "bundle-products",
         "products_limit": 4
       }
     },
