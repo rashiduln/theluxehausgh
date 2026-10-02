@@ -7,6 +7,11 @@
     assign product = collections.all.products.first
   endif
 
+  assign is_restricted = false
+  if block_settings.require_login and customer == blank
+    assign is_restricted = true
+  endif
+
   assign variant = closest.product.selected_or_first_available_variant
   assign inventory_quantity = variant.inventory_quantity
   assign inventory_policy = variant.inventory_policy
@@ -36,6 +41,58 @@
   endif
 %}
 
+{% if is_restricted and block_settings.show_login_button and block_settings.login_button_style == 'button-custom' %}
+  {%- assign effective_login_bg = block_settings.login_button_background
+    | default: settings.palette_primary_button_background
+  -%}
+  {%- assign effective_login_text = block_settings.login_button_text
+    | default: settings.palette_primary_button_text
+  -%}
+  {%- assign effective_login_border = block_settings.login_button_border
+    | default: settings.palette_primary_button_border
+  -%}
+  {%- if effective_login_bg.alpha == 0 -%}
+    {%- assign effective_login_focus = effective_login_text -%}
+  {%- else -%}
+    {%- assign effective_login_focus = effective_login_bg -%}
+  {%- endif -%}
+  {%- capture login_hover_resolved -%}
+    {% render 'resolve-custom-hover',
+      base_bg: effective_login_bg,
+      base_text: effective_login_text,
+      base_border: effective_login_border
+    %}
+  {%- endcapture -%}
+  {%- assign login_hover_parts = login_hover_resolved | strip | split: '||' -%}
+  {%- assign effective_login_hover_bg = login_hover_parts[0] -%}
+  {%- assign effective_login_hover_text = login_hover_parts[1] -%}
+  {%- assign effective_login_hover_border = login_hover_parts[2] -%}
+  {% style %}
+    .button-custom--login-{{ block.id }} {
+      --button-background-color: rgb({{ effective_login_bg.rgba }});
+      --button-color: rgb({{ effective_login_text.rgba }});
+      --button-border-color: rgb({{ effective_login_border.rgba }});
+      --button-focus-outline-color: rgb({{ effective_login_focus.rgb }});
+    }
+    .button-custom--login-{{ block.id }}:hover {
+      --button-background-color: {{ effective_login_hover_bg }};
+      --button-color: {{ effective_login_hover_text }};
+      --button-border-color: {{ effective_login_hover_border }};
+    }
+  {% endstyle %}
+{% endif %}
+
+{% if is_restricted and block_settings.show_login_button and block_settings.login_button_style == 'button-unstyled' and block_settings.login_link_text_color != blank %}
+  {% style %}
+    .button-unstyled--login-{{ block.id }} {
+      color: rgb({{ block_settings.login_link_text_color.rgba }});
+    }
+    .button-unstyled--login-{{ block.id }}:hover {
+      color: rgb({{ block_settings.login_link_text_color.rgb }} / var(--opacity-70));
+    }
+  {% endstyle %}
+{% endif %}
+
 <span
   class="buy-buttons-block buy-buttons-block--{{ block.id }}"
   {% if block_settings.text_color != blank %}
@@ -43,7 +100,23 @@
   {% endif %}
   {{ block.shopify_attributes }}
 >
-  {%- if product != blank -%}
+  {%- if is_restricted -%}
+    {%- if block_settings.show_login_button -%}
+      {%- assign login_url = block_settings.login_button_link | default: routes.account_login_url -%}
+      {%- assign login_label = block_settings.login_button_label | default: 'Log in to purchase' -%}
+      <div
+        class="product-form-buttons spacing-style"
+        style="{% render 'spacing-style', settings: block_settings %}"
+      >
+        <a
+          href="{{ login_url }}"
+          class="button {{ block_settings.login_button_style }} {{ block_settings.login_button_style }}--login-{{ block.id }}"
+        >
+          {{ login_label }}
+        </a>
+      </div>
+    {%- endif -%}
+  {%- elsif product != blank -%}
     {%- assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id -%}
     <product-form-component
       data-section-id="{{ section.id }}"
@@ -257,7 +330,7 @@
   {%- endif -%}
 </span>
 
-{% if block_settings.show_pickup_availability %}
+{% if block_settings.show_pickup_availability and is_restricted == false %}
   <script
     src="{{ 'local-pickup.js' | asset_url }}"
     type="module"
@@ -402,6 +475,100 @@
       "id": "text_color",
       "label": "t:settings.text_color",
       "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "Customer access"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_login",
+      "label": "Require login to purchase",
+      "default": false,
+      "info": "Only logged-in customers will see and use the buy buttons. For visitors, buy buttons will be hidden."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_login_button",
+      "label": "Show login button for visitors",
+      "default": true,
+      "info": "Displays a login button for non-logged-in visitors.",
+      "visible_if": "{{ block.settings.require_login }}"
+    },
+    {
+      "type": "text",
+      "id": "login_button_label",
+      "label": "Login button label",
+      "default": "Log in to purchase",
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button }}"
+    },
+    {
+      "type": "url",
+      "id": "login_button_link",
+      "label": "Login button link",
+      "info": "Leave blank to redirect to the customer login page.",
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button }}"
+    },
+    {
+      "type": "select",
+      "id": "login_button_style",
+      "label": "Login button style",
+      "options": [
+        {
+          "value": "button",
+          "label": "Primary"
+        },
+        {
+          "value": "button-secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "button-custom",
+          "label": "Custom"
+        },
+        {
+          "value": "button-unstyled",
+          "label": "Link"
+        }
+      ],
+      "default": "button",
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button }}"
+    },
+    {
+      "type": "header",
+      "content": "Login button colors",
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button and block.settings.login_button_style == 'button-custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "login_button_background",
+      "label": "Background",
+      "default": "{{ settings.color_palette.foreground }}",
+      "alpha": true,
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button and block.settings.login_button_style == 'button-custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "login_button_text",
+      "label": "Text",
+      "default": "{{ settings.color_palette.background }}",
+      "alpha": true,
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button and block.settings.login_button_style == 'button-custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "login_button_border",
+      "label": "Borders",
+      "default": "{{ settings.color_palette.foreground }}",
+      "alpha": true,
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button and block.settings.login_button_style == 'button-custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "login_link_text_color",
+      "label": "Link text color",
+      "placeholder": "Default",
+      "visible_if": "{{ block.settings.require_login and block.settings.show_login_button and block.settings.login_button_style == 'button-unstyled' }}"
     },
     {
       "type": "header",
