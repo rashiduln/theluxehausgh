@@ -494,11 +494,29 @@
                         else
                           assign piece_title = piece
                         endif
-                        assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.id | default: piece
-                        assign piece_price = piece.price | money | default: 'GHS 250'
+
                         assign piece_available = true
-                        if piece.available != nil
+                        assign piece_variant_id = piece.id | default: piece
+                        assign piece_price = 'GHS 250'
+
+                        if piece.product != blank
                           assign piece_available = piece.available
+                          assign piece_variant_id = piece.id
+                          if piece.price != blank
+                            assign piece_price = piece.price | money
+                          endif
+                        elsif piece.variants != blank
+                          assign piece_available = piece.available
+                          assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id
+                          if piece.price != blank
+                            assign piece_price = piece.price | money
+                          endif
+                        elsif piece.available != nil
+                          assign piece_available = piece.available
+                          assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id | default: piece
+                          if piece.price != blank
+                            assign piece_price = piece.price | money
+                          endif
                         endif
                       -%}
                       <label class="lux_opt {% if forloop.first %}lux_selected{% endif %} {% unless piece_available %}lux_opt_soldout{% endunless %}">
@@ -569,11 +587,29 @@
                       else
                         assign piece_title = piece
                       endif
-                      assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.id | default: piece
-                      assign piece_price = piece.price | money | default: 'GHS 250'
+
                       assign piece_available = true
-                      if piece.available != nil
+                      assign piece_variant_id = piece.id | default: piece
+                      assign piece_price = 'GHS 250'
+
+                      if piece.product != blank
                         assign piece_available = piece.available
+                        assign piece_variant_id = piece.id
+                        if piece.price != blank
+                          assign piece_price = piece.price | money
+                        endif
+                      elsif piece.variants != blank
+                        assign piece_available = piece.available
+                        assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id
+                        if piece.price != blank
+                          assign piece_price = piece.price | money
+                        endif
+                      elsif piece.available != nil
+                        assign piece_available = piece.available
+                        assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id | default: piece
+                        if piece.price != blank
+                          assign piece_price = piece.price | money
+                        endif
                       endif
                     -%}
                     <label class="lux_opt {% if forloop.first %}lux_selected{% endif %} {% unless piece_available %}lux_opt_soldout{% endunless %}">
@@ -771,8 +807,13 @@
         
         if (!checkedRadio) return;
 
-        const variantId = checkedRadio.value;
         const pieceName = checkedRadio.dataset.pieceName || checkedRadio.closest('.lux_opt')?.querySelector('.lux_o_name')?.textContent || 'Refill';
+        if (checkedRadio.dataset.available === 'false') {
+          refillMsg.textContent = `${pieceName} is currently sold out.`;
+          return;
+        }
+
+        const variantId = checkedRadio.value;
         const isNumericId = /^\d+$/.test(variantId);
 
         refillBtn.disabled = true;

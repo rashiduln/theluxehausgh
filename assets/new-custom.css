@@ -862,6 +862,16 @@
   font-weight: 500;
 }
 
+.lux_opt.lux_opt_soldout {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lux_opt.lux_opt_soldout .lux_o_price {
+  color: var(--lux-muted);
+  font-size: 14px;
+}
+
 .lux_unavailable {
   font-size: 16px;
   color: var(--lux-muted);
