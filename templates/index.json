@@ -22,7 +22,7 @@
         "note_title": "The House Call",
         "note_text": "Prefer to smell it first? We bring the collection to you, anywhere in Accra. The GHS 50 fee counts toward anything you choose.",
         "note_link_label": "Book yours",
-        "note_link": "/pages/house-call"
+        "note_link": "shopify://products/the-house-call"
       }
     },
     "lux_featured_scents": {
