@@ -145,13 +145,27 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
+              {%- liquid
+                assign is_sub_product = false
+                if item.parent_relationship.parent != null or item.properties._bundle_role == 'sub'
+                  assign is_sub_product = true
+                endif
+                assign is_main_bundle = false
+                if item.properties._bundle_role == 'main'
+                  assign is_main_bundle = true
+                endif
+              -%}
               <tr
                 id="CartItem-{{ item.key }}"
                 role="row"
-                class="cart-items__table-row{% if item.parent_relationship.parent != null %} cart-items__nested-line{% endif %}{% if context == 'drawer' %}{% unless item.unit_price_measurement %} cart-items__table-row--full-width-variants{% endunless %}{% endif %}"
+                class="cart-items__table-row{% if is_sub_product %} cart-items__nested-line cart-items__sub-product{% endif %}{% if is_main_bundle %} cart-items__main-bundle{% endif %}{% if context == 'drawer' %}{% unless item.unit_price_measurement %} cart-items__table-row--full-width-variants{% endunless %}{% endif %}"
                 ref="cartItemRows[]"
                 data-parent-key="{{ item.parent_relationship.parent.key }}"
                 data-key="{{ item.key }}"
+                {% if item.properties._bundle_id != blank %}
+                  data-bundle-id="{{ item.properties._bundle_id }}"
+                  data-bundle-role="{{ item.properties._bundle_role }}"
+                {% endif %}
               >
                 <td
                   class="cart-items__media"
@@ -190,6 +204,14 @@
                   headers="productInformation"
                 >
                   <div class="cart-items__product-info">
+                    {%- if is_main_bundle -%}
+                      <div class="cart-items__bundle-badge">Set Bundle</div>
+                    {%- elsif is_sub_product -%}
+                      <div class="cart-items__sub-badge">
+                        <span class="cart-items__sub-branch">↳</span>
+                        <span class="cart-items__sub-label">Included Piece</span>
+                      </div>
+                    {%- endif -%}
                     {%- liquid
                       assign cart_disclosure_unique_id = 'page-' | append: item.index
                       if context == 'drawer'
@@ -409,9 +431,13 @@
                   role="cell"
                   headers="productTotal"
                 >
-                  <text-component value="{{ price | strip_html }}"
-                    ><bdi>{{ price }}</bdi></text-component
-                  >
+                  {%- if is_sub_product and item.final_line_price == 0 -%}
+                    <span class="cart-items__price-tag-included">Included</span>
+                  {%- else -%}
+                    <text-component value="{{ price | strip_html }}"
+                      ><bdi>{{ price }}</bdi></text-component
+                    >
+                  {%- endif -%}
                   {%- if item.unit_price_measurement -%}
                     <div class="cart-items__price-unit cart-secondary-typography">
                       {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}
@@ -552,6 +578,75 @@
   .cart-items__table-row.cart-items__nested-line td:first-child {
     width: 60%;
     justify-self: right;
+  }
+
+  /* Custom Sub-product & Bundle Component Styles */
+  .cart-items__table-row.cart-items__sub-product {
+    position: relative;
+    background: rgba(201, 180, 138, 0.04);
+    border-left: 2px solid var(--lux-champagne, #C9B48A);
+    padding-left: var(--padding-md);
+    margin-top: calc(var(--cart-items-gap, 16px) * -0.2);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .cart-items__table-row.cart-items__sub-product .cart-items__media-container {
+    transform: scale(0.85);
+    transform-origin: center;
+    border-radius: 4px;
+    opacity: 0.9;
+  }
+
+  .cart-items__table-row.cart-items__sub-product .cart-items__title {
+    font-size: var(--font-size--sm);
+    color: var(--lux-ivory, #EDE6DA);
+    opacity: 0.92;
+  }
+
+  .cart-items__sub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--lux-champagne, #C9B48A);
+    margin-bottom: 3px;
+  }
+
+  .cart-items__sub-branch {
+    font-size: 13px;
+    line-height: 1;
+    color: var(--lux-champagne, #C9B48A);
+  }
+
+  .cart-items__sub-label {
+    background: rgba(201, 180, 138, 0.14);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+
+  .cart-items__bundle-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--lux-ivory, #EDE6DA);
+    background: var(--lux-warmth, #452A24);
+    border: 1px solid var(--lux-rule, rgba(201, 180, 138, 0.22));
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    width: fit-content;
+  }
+
+  .cart-items__price-tag-included {
+    display: inline-block;
+    font-size: var(--font-size--xs);
+    letter-spacing: 0.04em;
+    color: var(--lux-champagne, #C9B48A);
+    font-style: italic;
   }
 
   html:active-view-transition-type(page-navigation) .cart-items__table-row {

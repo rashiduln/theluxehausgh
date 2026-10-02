@@ -255,14 +255,28 @@ export class CartItemsComponent extends createViewEventElement(Component) {
 
     if (!cartItemRowToRemove) return;
 
-    const rowsToRemove = [
+    const bundleId = cartItemRowToRemove.dataset.bundleId;
+
+    let rowsToRemove = [
       cartItemRowToRemove,
       // Get all nested lines of the row to remove
       ...this.refs.cartItemRows.filter((row) => row.dataset.parentKey === cartItemRowToRemove.dataset.key),
     ];
 
+    if (bundleId) {
+      const bundleRows = this.refs.cartItemRows.filter((row) => row.dataset.bundleId === bundleId);
+      rowsToRemove = Array.from(new Set([...rowsToRemove, ...bundleRows]));
+    }
+
+    this.updateQuantity({
+      line,
+      quantity: 0,
+      action: 'clear',
+      bundleId: bundleId || undefined,
+    });
+
     // If the cart item row is the last row, optimistically trigger the cart empty state
-    const isEmptyCart = rowsToRemove.length == this.refs.cartItemRows.length;
+    const isEmptyCart = rowsToRemove.length >= this.refs.cartItemRows.length;
 
     const template = document.getElementById('empty-cart-template');
     if (isEmptyCart && template instanceof HTMLTemplateElement) {
@@ -296,6 +310,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
    * @param {number} config.line - The line.
    * @param {number} config.quantity - The quantity.
    * @param {string} config.action - The action.
+   * @param {string} [config.bundleId] - The optional bundle ID.
    */
   async updateQuantity(config) {
     const cartPerformaceUpdateMarker = cartPerformance.createStartingMarker(`${config.action}:user-action`);
@@ -312,6 +327,8 @@ export class CartItemsComponent extends createViewEventElement(Component) {
 
       const { line, quantity } = config;
       const { cartTotal } = this.refs;
+      const targetRow = this.refs.cartItemRows[line - 1];
+      const bundleId = config.bundleId || targetRow?.dataset.bundleId;
 
       const cartItemsComponents = document.querySelectorAll('cart-items-component');
       const sectionsToUpdate = new Set([this.sectionId]);
@@ -325,16 +342,35 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         sectionRenderer.abortRender(sectionId);
       }
 
-      const body = JSON.stringify({
-        line: line,
-        quantity: quantity,
-        sections: Array.from(sectionsToUpdate).join(','),
-        sections_url: window.location.pathname,
-      });
+      let body;
+      let endpoint = Theme.routes.cart_change_url;
+
+      if (bundleId) {
+        const bundleRows = this.refs.cartItemRows.filter((row) => row.dataset.bundleId === bundleId);
+        const updates = {};
+        bundleRows.forEach((r) => {
+          if (r.dataset.key) {
+            updates[r.dataset.key] = quantity;
+          }
+        });
+        body = JSON.stringify({
+          updates: updates,
+          sections: Array.from(sectionsToUpdate).join(','),
+          sections_url: window.location.pathname,
+        });
+        endpoint = Theme.routes.cart_update_url;
+      } else {
+        body = JSON.stringify({
+          line: line,
+          quantity: quantity,
+          sections: Array.from(sectionsToUpdate).join(','),
+          sections_url: window.location.pathname,
+        });
+      }
 
       cartTotal?.shimmer();
 
-      const lineId = this.refs.cartItemRows[line - 1]?.dataset.key ?? '';
+      const lineId = targetRow?.dataset.key ?? '';
       this.dispatchEvent(
         new CartLinesUpdateEvent({
           action: config.action === 'change' && quantity > 0 ? 'update' : 'remove',
@@ -344,7 +380,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         })
       );
 
-      const response = await fetch(`${Theme.routes.cart_change_url}`, fetchConfig('json', { body }));
+      const response = await fetch(`${endpoint}`, fetchConfig('json', { body }));
       const responseText = await response.text();
       const parsedResponseText = JSON.parse(responseText);
 

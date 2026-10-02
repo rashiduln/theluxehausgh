@@ -81,6 +81,22 @@
                   assign sub_text = variant.metafields.custom.contents_description.value | default: variant.metafields.custom.contents_description
                 endif
               -%}
+              {%- capture set_items_json -%}
+                [
+                  {%- if set_items.first -%}
+                    {%- for piece in set_items -%}
+                      {%- liquid
+                        assign piece_v_id = piece.selected_or_first_available_variant.id | default: piece.id
+                        assign piece_t = piece.title | default: piece
+                      -%}
+                      {
+                        "id": {{ piece_v_id | json }},
+                        "title": {{ piece_t | json }}
+                      }{%- unless forloop.last -%},{%- endunless -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                ]
+              {%- endcapture -%}
               <label class="lux_opt {% if is_checked %}lux_selected{% endif %} {% unless variant.available %}lux_opt_soldout{% endunless %}">
                 <input
                   type="radio"
@@ -89,6 +105,7 @@
                   data-price="{{ variant.price | money }}"
                   data-available="{{ variant.available }}"
                   data-image="{% if variant.featured_image %}{{ variant.featured_image | image_url: width: 900 }}{% endif %}"
+                  data-set-items="{{ set_items_json | escape }}"
                   {% if is_checked %}checked{% endif %}
                   onchange="
                     document.getElementById('lux-selected-variant-id').value = this.value;
@@ -139,6 +156,22 @@
               assign single_sub_text = product.metafields.custom.contents_description.value | default: product.metafields.custom.contents_description
             endif
           -%}
+          {%- capture single_set_items_json -%}
+            [
+              {%- if single_set_items.first -%}
+                {%- for piece in single_set_items -%}
+                  {%- liquid
+                    assign piece_v_id = piece.selected_or_first_available_variant.id | default: piece.id
+                    assign piece_t = piece.title | default: piece
+                  -%}
+                  {
+                    "id": {{ piece_v_id | json }},
+                    "title": {{ piece_t | json }}
+                  }{%- unless forloop.last -%},{%- endunless -%}
+                {%- endfor -%}
+              {%- endif -%}
+            ]
+          {%- endcapture -%}
           <fieldset class="lux_portrait_options">
             <legend class="lux_portrait_legend">Choose your portrait</legend>
             <label class="lux_opt lux_selected">
@@ -148,6 +181,7 @@
                 value="{{ current_variant.id }}"
                 data-price="{{ product.price | money }}"
                 data-available="{{ product.available }}"
+                data-set-items="{{ single_set_items_json | escape }}"
                 checked
               >
               <span>
@@ -376,9 +410,83 @@
     }
 
     if (form) {
-      form.addEventListener('submit', function (e) {
-        if (msgEl) {
-          msgEl.innerHTML = `Set added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const selectedVariantInput = sectionEl.querySelector('#lux-selected-variant-id');
+        const mainVariantId = parseInt(selectedVariantInput ? selectedVariantInput.value : '{{ current_variant.id }}', 10);
+        const qty = parseInt(qtyInput ? qtyInput.value : '1', 10) || 1;
+        const checkedRadio = sectionEl.querySelector('input[name="lux_variant_choice"]:checked');
+
+        let setItems = [];
+        if (checkedRadio && checkedRadio.dataset.setItems) {
+          try {
+            setItems = JSON.parse(checkedRadio.dataset.setItems);
+          } catch (err) {}
+        }
+
+        const bundleId = 'bundle_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+
+        const items = [
+          {
+            id: mainVariantId,
+            quantity: qty,
+            properties: {
+              _bundle_id: bundleId,
+              _bundle_role: 'main'
+            }
+          }
+        ];
+
+        setItems.forEach(item => {
+          const subId = parseInt(item.id, 10);
+          if (!isNaN(subId) && subId > 0 && subId !== mainVariantId) {
+            items.push({
+              id: subId,
+              quantity: qty,
+              properties: {
+                _bundle_id: bundleId,
+                _bundle_role: 'sub'
+              }
+            });
+          }
+        });
+
+        if (addBtn) {
+          addBtn.disabled = true;
+          const origText = addBtn.textContent;
+          addBtn.textContent = 'Adding...';
+
+          try {
+            const res = await fetch('{{ routes.cart_add_url | append: ".js" }}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({ items })
+            });
+
+            if (res.ok) {
+              if (msgEl) {
+                msgEl.innerHTML = `Set added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+              }
+              document.dispatchEvent(new CustomEvent('cart:updated'));
+              window.dispatchEvent(new CustomEvent('cart:refresh'));
+            } else {
+              const errData = await res.json();
+              if (msgEl) {
+                msgEl.textContent = errData.description || errData.message || 'Could not add set to bag.';
+              }
+            }
+          } catch (err) {
+            if (msgEl) {
+              msgEl.textContent = 'Error adding set to bag.';
+            }
+          } finally {
+            addBtn.disabled = false;
+            addBtn.textContent = origText;
+          }
         }
       });
     }
