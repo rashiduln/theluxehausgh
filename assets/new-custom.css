@@ -841,6 +841,25 @@
   font-size: 17px;
   white-space: nowrap;
   color: var(--lux-champagne);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+  line-height: 1.2;
+}
+
+.lux_opt .lux_o_compare_price {
+  font-size: 14px;
+  color: var(--lux-muted);
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
+.lux_opt .lux_o_final_price {
+  font-size: 17px;
+  color: var(--lux-champagne);
+  font-weight: 500;
 }
 
 .lux_unavailable {
