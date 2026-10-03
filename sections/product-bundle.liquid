@@ -1,0 +1,951 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant | default: product.variants.first
+  assign line = product.metafields.custom.line | default: 'her'
+  assign mood = product.metafields.custom.mood | default: section.settings.default_mood
+  assign tone = product.metafields.custom.tone_color | default: section.settings.default_tone | default: '#3B2A24'
+  assign is_signature = product.metafields.custom.signature_available | default: section.settings.signature_available
+
+  # Check if logged-in customer has previously purchased this bundle product
+  assign customer_has_bought = false
+  if customer and customer.orders_count > 0
+    for order in customer.orders
+      for item in order.line_items
+        if item.product_id == product.id
+          assign customer_has_bought = true
+          break
+        endif
+      endfor
+      if customer_has_bought
+        break
+      endif
+    endfor
+  endif
+-%}
+
+<section class="lux_section_root lux_product_section lux_bundle_section" id="lux-product-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="lux_wrap lux_product">
+    
+    {%- comment -%} Left Column: Product Visual / Media {%- endcomment -%}
+    <div class="lux_product_gallery">
+      <div class="lux_product_swatch" style="background: linear-gradient(180deg, {{ tone }}, #0f0c0c);">
+        {%- if product.featured_image != blank -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 900 }}"
+            alt="{{ product.title | escape }}"
+            id="lux-featured-image-{{ section.id }}"
+            loading="eager"
+          >
+        {%- else -%}
+          {% render 'lux-bottle-icon', shape: 'wash' %}
+          {% render 'lux-bottle-icon', shape: 'cream' %}
+          {% render 'lux-bottle-icon', shape: 'spray' %}
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Right Column: Product Information & Form {%- endcomment -%}
+    <div class="lux_product_info">
+      <nav class="lux_crumbs" aria-label="Breadcrumbs">
+        <a href="{{ routes.root_url }}">Home</a> /
+        {%- if collection -%}
+          <a href="{{ collection.url }}">{{ collection.title }}</a> /
+        {%- elsif line == 'him' -%}
+          <a href="/collections/all?line=him">For him</a> /
+        {%- else -%}
+          <a href="/collections/all?line=her">For her</a> /
+        {%- endif -%}
+        {%- if mood != blank -%}
+          <a href="/collections/all?mood={{ mood | url_encode }}">{{ mood }}</a>
+        {%- else -%}
+          <span>{{ product.title }}</span>
+        {%- endif -%}
+      </nav>
+
+      <h1 class="lux_product_h1">{{ product.title }}</h1>
+
+      {%- if customer_has_bought -%}
+        <div class="lux_owned_badge" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 4px 12px; background: rgba(200, 169, 126, 0.12); border: 1px solid var(--lux-champagne); border-radius: 999px; font-size: 13px; color: var(--lux-champagne); letter-spacing: 0.05em; text-transform: uppercase;">
+          <span>✓</span> You own this set
+        </div>
+      {%- endif -%}
+
+      <p class="lux_mood_line">
+        {%- if mood != blank -%}
+          {{ mood }}.
+        {%- endif -%}
+        {%- if line == 'him' -%}
+          Wash, cream, and deodorizing body spray in one scent.
+        {%- else -%}
+          Wash, cream, and mist in one scent.
+        {%- endif -%}
+      </p>
+
+      {%- comment -%} Render App Blocks (e.g. Shopify Bundles app widgets) if present {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            <div class="lux_app_block_wrapper" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+
+      {%- form 'product', product, id: 'lux-product-form', class: 'lux_product_form' -%}
+        <input type="hidden" name="id" id="lux-selected-variant-id" value="{{ current_variant.id }}">
+
+        {%- if product.has_only_default_variant == false -%}
+          <fieldset class="lux_portrait_options">
+            <legend class="lux_portrait_legend">Choose your portrait</legend>
+            {%- for variant in product.variants -%}
+              {%- liquid
+                assign is_checked = false
+                if variant.id == current_variant.id
+                  assign is_checked = true
+                endif
+                
+                assign set_items = variant.metafields.custom.product_sets.value | default: variant.metafields.custom.product_sets
+                assign sub_text_parts = ''
+                if set_items.first != blank or set_items.size > 0
+                  for piece in set_items
+                    assign piece_str = ''
+                    if piece.product != blank
+                      if piece.title != blank and piece.title != 'Default Title'
+                        assign piece_str = piece.product.title | append: ' (' | append: piece.title | append: ')'
+                      else
+                        assign piece_str = piece.product.title
+                      endif
+                    elsif piece.title != blank and piece.title != 'Default Title'
+                      assign piece_str = piece.title
+                    elsif piece.name != blank
+                      assign piece_str = piece.name
+                    elsif piece.product_title != blank
+                      assign piece_str = piece.product_title
+                    else
+                      assign piece_str = piece
+                    endif
+
+                    if piece_str != blank
+                      if sub_text_parts == ''
+                        assign sub_text_parts = piece_str
+                      else
+                        assign sub_text_parts = sub_text_parts | append: ', ' | append: piece_str
+                      endif
+                    endif
+                  endfor
+                  assign sub_text = sub_text_parts
+                else
+                  if set_items.product != blank
+                    if set_items.title != blank and set_items.title != 'Default Title'
+                      assign sub_text = set_items.product.title | append: ' (' | append: set_items.title | append: ')'
+                    else
+                      assign sub_text = set_items.product.title
+                    endif
+                  elsif set_items.title != blank and set_items.title != 'Default Title'
+                    assign sub_text = set_items.title
+                  elsif set_items.name != blank
+                    assign sub_text = set_items.name
+                  elsif set_items != blank
+                    assign sub_text = set_items
+                  endif
+                endif
+
+                if sub_text == blank
+                  assign sub_text = variant.metafields.custom.contents_description.value | default: variant.metafields.custom.contents_description
+                endif
+
+                # 1. Calculate Set Total Price from sub-items
+                assign set_total_price = 0
+                assign has_piece_prices = false
+                if set_items.first != blank or set_items.size > 0
+                  for piece in set_items
+                    if piece.price != blank and piece.price > 0
+                      assign set_total_price = set_total_price | plus: piece.price
+                      assign has_piece_prices = true
+                    endif
+                  endfor
+                endif
+
+                if has_piece_prices == false or set_total_price == 0
+                  if variant.compare_at_price > variant.price
+                    assign set_total_price = variant.compare_at_price
+                  else
+                    assign set_total_price = variant.price
+                  endif
+                endif
+
+                # 2. Determine Discounted / Bundle Price from metafield custom.bundle_price
+                assign raw_bundle_price = variant.metafields.custom.bundle_price.value | default: variant.metafields.custom.bundle_price
+                if raw_bundle_price == blank
+                  assign raw_bundle_price = product.metafields.custom.bundle_price.value | default: product.metafields.custom.bundle_price
+                endif
+
+                assign discounted_price_formatted = ''
+                assign discounted_price_cents = 0
+
+                if raw_bundle_price != blank
+                  assign raw_str = raw_bundle_price | append: ''
+                  if raw_str contains 'GHS' or raw_str contains '$' or raw_str contains '€' or raw_str contains '£'
+                    assign discounted_price_formatted = raw_str
+                  else
+                    assign num_val = raw_bundle_price | times: 1
+                    if num_val < 5000 and variant.price >= 5000
+                      assign discounted_price_cents = num_val | times: 100
+                      assign discounted_price_formatted = discounted_price_cents | money
+                    else
+                      assign discounted_price_cents = num_val
+                      assign discounted_price_formatted = num_val | money
+                    endif
+                  endif
+                else
+                  assign discounted_price_cents = variant.price
+                  assign discounted_price_formatted = variant.price | money
+                endif
+              -%}
+              {%- capture set_items_json -%}
+                [
+                  {%- if set_items.first != blank or set_items.size > 0 -%}
+                    {%- for piece in set_items -%}
+                      {%- liquid
+                        assign piece_v_id = piece.selected_or_first_available_variant.id | default: piece.id | default: piece
+                        assign piece_t = ''
+                        if piece.product != blank
+                          if piece.title != blank and piece.title != 'Default Title'
+                            assign piece_t = piece.product.title | append: ' (' | append: piece.title | append: ')'
+                          else
+                            assign piece_t = piece.product.title
+                          endif
+                        elsif piece.title != blank and piece.title != 'Default Title'
+                          assign piece_t = piece.title
+                        elsif piece.name != blank
+                          assign piece_t = piece.name
+                        else
+                          assign piece_t = piece
+                        endif
+                      -%}
+                      {
+                        "id": {{ piece_v_id | json }},
+                        "title": {{ piece_t | json }}
+                      }{%- unless forloop.last -%},{%- endunless -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                ]
+              {%- endcapture -%}
+              <label class="lux_opt {% if is_checked %}lux_selected{% endif %} {% unless variant.available %}lux_opt_soldout{% endunless %}">
+                <input
+                  type="radio"
+                  name="lux_variant_choice"
+                  value="{{ variant.id }}"
+                  data-price="{{ discounted_price_formatted }}"
+                  data-available="{{ variant.available }}"
+                  data-image="{% if variant.featured_image %}{{ variant.featured_image | image_url: width: 900 }}{% endif %}"
+                  data-set-items="{{ set_items_json | escape }}"
+                  {% if is_checked %}checked{% endif %}
+                  onchange="
+                    document.getElementById('lux-selected-variant-id').value = this.value;
+                    document.querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected'));
+                    this.closest('.lux_opt').classList.add('lux_selected');
+                    const addBtn = document.getElementById('lux-add-to-cart-btn');
+                    if (addBtn) {
+                      if (this.dataset.available === 'true') {
+                        addBtn.removeAttribute('disabled');
+                        addBtn.textContent = 'Add to bag';
+                      } else {
+                        addBtn.setAttribute('disabled', 'disabled');
+                        addBtn.textContent = 'Sold out';
+                      }
+                    }
+                    if (this.dataset.image) {
+                      const img = document.getElementById('lux-featured-image-{{ section.id }}');
+                      if (img) img.src = this.dataset.image;
+                    }
+                  "
+                >
+                <span>
+                  <span class="lux_o_name">{{ variant.title }}</span>
+                  {%- if sub_text != blank -%}
+                    <span class="lux_o_contents">{{ sub_text }}</span>
+                  {%- endif -%}
+                </span>
+                <span class="lux_o_price">
+                  {%- if variant.available -%}
+                    {%- if section.settings.show_only_discounted_price -%}
+                      <span class="lux_o_final_price">{{ discounted_price_formatted }}</span>
+                    {%- else -%}
+                      {%- if set_total_price > discounted_price_cents and discounted_price_cents > 0 -%}
+                        <s class="lux_o_compare_price">{{ set_total_price | money }}</s>
+                        <span class="lux_o_final_price">{{ discounted_price_formatted }}</span>
+                      {%- elsif raw_bundle_price != blank and set_total_price > 0 -%}
+                        <s class="lux_o_compare_price">{{ set_total_price | money }}</s>
+                        <span class="lux_o_final_price">{{ discounted_price_formatted }}</span>
+                      {%- else -%}
+                        <span class="lux_o_final_price">{{ discounted_price_formatted }}</span>
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- else -%}
+                    Sold out
+                  {%- endif -%}
+                </span>
+              </label>
+            {%- endfor -%}
+          </fieldset>
+        {%- else -%}
+          {%- comment -%} Single Variant / Non-variant Bundle Product {%- endcomment -%}
+          {%- liquid
+            assign single_set_items = current_variant.metafields.custom.product_sets.value | default: current_variant.metafields.custom.product_sets | default: product.metafields.custom.product_sets.value | default: product.metafields.custom.product_sets
+            assign single_sub_text_parts = ''
+            if single_set_items.first != blank or single_set_items.size > 0
+              for piece in single_set_items
+                assign piece_str = ''
+                if piece.product != blank
+                  if piece.title != blank and piece.title != 'Default Title'
+                    assign piece_str = piece.product.title | append: ' (' | append: piece.title | append: ')'
+                  else
+                    assign piece_str = piece.product.title
+                  endif
+                elsif piece.title != blank and piece.title != 'Default Title'
+                  assign piece_str = piece.title
+                elsif piece.name != blank
+                  assign piece_str = piece.name
+                elsif piece.product_title != blank
+                  assign piece_str = piece.product_title
+                else
+                  assign piece_str = piece
+                endif
+
+                if piece_str != blank
+                  if single_sub_text_parts == ''
+                    assign single_sub_text_parts = piece_str
+                  else
+                    assign single_sub_text_parts = single_sub_text_parts | append: ', ' | append: piece_str
+                  endif
+                endif
+              endfor
+              assign single_sub_text = single_sub_text_parts
+            else
+              if single_set_items.product != blank
+                if single_set_items.title != blank and single_set_items.title != 'Default Title'
+                  assign single_sub_text = single_set_items.product.title | append: ' (' | append: single_set_items.title | append: ')'
+                else
+                  assign single_sub_text = single_set_items.product.title
+                endif
+              elsif single_set_items.title != blank and single_set_items.title != 'Default Title'
+                assign single_sub_text = single_set_items.title
+              elsif single_set_items.name != blank
+                assign single_sub_text = single_set_items.name
+              elsif single_set_items != blank
+                assign single_sub_text = single_set_items
+              endif
+            endif
+
+            if single_sub_text == blank
+              assign single_sub_text = current_variant.metafields.custom.contents_description.value | default: current_variant.metafields.custom.contents_description | default: product.metafields.custom.contents_description.value | default: product.metafields.custom.contents_description
+            endif
+
+            # 1. Calculate Set Total Price for single bundle
+            assign single_set_total = 0
+            assign has_single_piece_prices = false
+            if single_set_items.first != blank or single_set_items.size > 0
+              for piece in single_set_items
+                if piece.price != blank and piece.price > 0
+                  assign single_set_total = single_set_total | plus: piece.price
+                  assign has_single_piece_prices = true
+                endif
+              endfor
+            endif
+
+            if has_single_piece_prices == false or single_set_total == 0
+              if current_variant.compare_at_price > current_variant.price
+                assign single_set_total = current_variant.compare_at_price
+              elsif product.compare_at_price > product.price
+                assign single_set_total = product.compare_at_price
+              else
+                assign single_set_total = current_variant.price | default: product.price
+              endif
+            endif
+
+            # 2. Determine Discounted / Bundle Price for single bundle
+            assign raw_single_bundle_price = current_variant.metafields.custom.bundle_price.value | default: current_variant.metafields.custom.bundle_price | default: product.metafields.custom.bundle_price.value | default: product.metafields.custom.bundle_price
+            assign single_discounted_formatted = ''
+            assign single_discounted_cents = 0
+
+            if raw_single_bundle_price != blank
+              assign raw_str = raw_single_bundle_price | append: ''
+              if raw_str contains 'GHS' or raw_str contains '$' or raw_str contains '€' or raw_str contains '£'
+                assign single_discounted_formatted = raw_str
+              else
+                assign num_val = raw_single_bundle_price | times: 1
+                if num_val < 5000 and current_variant.price >= 5000
+                  assign single_discounted_cents = num_val | times: 100
+                  assign single_discounted_formatted = single_discounted_cents | money
+                else
+                  assign single_discounted_cents = num_val
+                  assign single_discounted_formatted = num_val | money
+                endif
+              endif
+            else
+              assign single_discounted_cents = current_variant.price | default: product.price
+              assign single_discounted_formatted = single_discounted_cents | money
+            endif
+          -%}
+          {%- capture single_set_items_json -%}
+            [
+              {%- if single_set_items.first != blank or single_set_items.size > 0 -%}
+                {%- for piece in single_set_items -%}
+                  {%- liquid
+                    assign piece_v_id = piece.selected_or_first_available_variant.id | default: piece.id | default: piece
+                    assign piece_t = ''
+                    if piece.product != blank
+                      if piece.title != blank and piece.title != 'Default Title'
+                        assign piece_t = piece.product.title | append: ' (' | append: piece.title | append: ')'
+                      else
+                        assign piece_t = piece.product.title
+                      endif
+                    elsif piece.title != blank and piece.title != 'Default Title'
+                      assign piece_t = piece.title
+                    elsif piece.name != blank
+                      assign piece_t = piece.name
+                    else
+                      assign piece_t = piece
+                    endif
+                  -%}
+                  {
+                    "id": {{ piece_v_id | json }},
+                    "title": {{ piece_t | json }}
+                  }{%- unless forloop.last -%},{%- endunless -%}
+                {%- endfor -%}
+              {%- endif -%}
+            ]
+          {%- endcapture -%}
+          <fieldset class="lux_portrait_options">
+            <legend class="lux_portrait_legend">Choose your portrait</legend>
+            <label class="lux_opt lux_selected">
+              <input
+                type="radio"
+                name="lux_variant_choice"
+                value="{{ current_variant.id }}"
+                data-price="{{ single_discounted_formatted }}"
+                data-available="{{ product.available }}"
+                data-set-items="{{ single_set_items_json | escape }}"
+                checked
+              >
+              <span>
+                <span class="lux_o_name">{{ product.title }}</span>
+                {%- if single_sub_text != blank -%}
+                  <span class="lux_o_contents">{{ single_sub_text }}</span>
+                {%- endif -%}
+              </span>
+              <span class="lux_o_price">
+                {%- if product.available -%}
+                  {%- if section.settings.show_only_discounted_price -%}
+                    <span class="lux_o_final_price">{{ single_discounted_formatted }}</span>
+                  {%- else -%}
+                    {%- if single_set_total > single_discounted_cents and single_discounted_cents > 0 -%}
+                      <s class="lux_o_compare_price">{{ single_set_total | money }}</s>
+                      <span class="lux_o_final_price">{{ single_discounted_formatted }}</span>
+                    {%- elsif raw_single_bundle_price != blank and single_set_total > 0 -%}
+                      <s class="lux_o_compare_price">{{ single_set_total | money }}</s>
+                      <span class="lux_o_final_price">{{ single_discounted_formatted }}</span>
+                    {%- else -%}
+                      <span class="lux_o_final_price">{{ single_discounted_formatted }}</span>
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- else -%}
+                  Sold out
+                {%- endif -%}
+              </span>
+            </label>
+          </fieldset>
+        {%- endif -%}
+
+        {%- unless is_signature -%}
+          <p class="lux_unavailable">
+            Signature isn't offered in {{ product.title }}, because there's no matching room mist. We only build a set when every piece is real.
+          </p>
+        {%- endunless -%}
+
+        <div class="lux_qty_row">
+          <div class="lux_qty" aria-label="Quantity">
+            <button type="button" id="lux-qty-minus" aria-label="Decrease quantity">&minus;</button>
+            <input type="number" id="lux-qty-input" name="quantity" value="1" min="1" max="99" aria-label="Quantity value">
+            <button type="button" id="lux-qty-plus" aria-label="Increase quantity">&#43;</button>
+          </div>
+
+          <button
+            type="submit"
+            name="add"
+            class="lux_btn_primary"
+            id="lux-add-to-cart-btn"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            {%- if current_variant.available -%}
+              Add to bag
+            {%- else -%}
+              Sold out
+            {%- endif -%}
+          </button>
+        </div>
+
+        <p class="lux_added" id="lux-added-msg" aria-live="polite"></p>
+      {%- endform -%}
+
+      {%- comment -%} Refills Collapsible - Refill individual pieces {%- endcomment -%}
+      {%- if section.settings.show_refills -%}
+        <details class="lux_refill" {% if customer_has_bought %}open{% endif %}>
+          <summary>
+            {%- if customer_has_bought -%}
+              Need a refill? Refill individual pieces in {{ product.title }}.
+            {%- else -%}
+              Already have this set? Refill a piece in {{ product.title }}.
+            {%- endif -%}
+          </summary>
+          <div class="lux_refill_body" style="margin-top: 14px;">
+            {%- if product.has_only_default_variant == false -%}
+              {%- for variant in product.variants -%}
+                {%- liquid
+                  assign is_active_variant = false
+                  if variant.id == current_variant.id
+                    assign is_active_variant = true
+                  endif
+                  assign v_sets = variant.metafields.custom.product_sets.value | default: variant.metafields.custom.product_sets
+                -%}
+                <fieldset
+                  class="lux_portrait_options lux_refill_fieldset"
+                  id="lux-refill-fieldset-{{ variant.id }}"
+                  data-variant-id="{{ variant.id }}"
+                  {% unless is_active_variant %}style="display: none;"{% endunless %}
+                >
+                  <legend class="lux_portrait_legend">Choose a piece</legend>
+                  {%- if v_sets.first != blank or v_sets.size > 0 -%}
+                    {%- for piece in v_sets -%}
+                      {%- liquid
+                        assign piece_title = ''
+                        if piece.product != blank
+                          if piece.title != blank and piece.title != 'Default Title'
+                            assign piece_title = piece.product.title | append: ' (' | append: piece.title | append: ')'
+                          else
+                            assign piece_title = piece.product.title
+                          endif
+                        elsif piece.title != blank and piece.title != 'Default Title'
+                          assign piece_title = piece.title
+                        elsif piece.name != blank
+                          assign piece_title = piece.name
+                        elsif piece.product_title != blank
+                          assign piece_title = piece.product_title
+                        else
+                          assign piece_title = piece
+                        endif
+
+                        assign piece_available = true
+                        assign piece_variant_id = piece.id | default: piece
+                        assign piece_price = 'GHS 250'
+
+                        if piece.product != blank
+                          assign piece_available = piece.available
+                          assign piece_variant_id = piece.id
+                          if piece.price != blank
+                            assign piece_price = piece.price | money
+                          endif
+                        elsif piece.variants != blank
+                          assign piece_available = piece.available
+                          assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id
+                          if piece.price != blank
+                            assign piece_price = piece.price | money
+                          endif
+                        elsif piece.available != nil
+                          assign piece_available = piece.available
+                          assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id | default: piece
+                          if piece.price != blank
+                            assign piece_price = piece.price | money
+                          endif
+                        endif
+                      -%}
+                      <label class="lux_opt {% if forloop.first %}lux_selected{% endif %} {% unless piece_available %}lux_opt_soldout{% endunless %}">
+                        <input
+                          type="radio"
+                          name="lux_refill_piece_{{ variant.id }}"
+                          class="lux_refill_radio"
+                          value="{{ piece_variant_id }}"
+                          data-piece-name="{{ piece_title | escape }}"
+                          data-available="{{ piece_available }}"
+                          {% if forloop.first %}checked{% endif %}
+                          onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');"
+                        >
+                        <span><span class="lux_o_name">{{ piece_title }}</span></span>
+                        <span class="lux_o_price">{% if piece_available %}{{ piece_price }}{% else %}Sold out{% endif %}</span>
+                      </label>
+                    {%- endfor -%}
+                  {%- else -%}
+                    <label class="lux_opt lux_selected">
+                      <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="wash" data-piece-name="Wash" checked onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                      <span><span class="lux_o_name">Wash</span></span>
+                      <span class="lux_o_price">GHS 250</span>
+                    </label>
+                    <label class="lux_opt">
+                      <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="cream" data-piece-name="Cream" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                      <span><span class="lux_o_name">Cream</span></span>
+                      <span class="lux_o_price">GHS 250</span>
+                    </label>
+                    <label class="lux_opt">
+                      <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="spray" data-piece-name="{% if line == 'him' %}Deodorizing body spray{% else %}Mist{% endif %}" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                      <span><span class="lux_o_name">{% if line == 'him' %}Deodorizing body spray{% else %}Mist{% endif %}</span></span>
+                      <span class="lux_o_price">GHS 250</span>
+                    </label>
+                    <label class="lux_opt">
+                      <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="cloth" data-piece-name="Exfoliating cloth" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                      <span><span class="lux_o_name">Exfoliating cloth</span></span>
+                      <span class="lux_o_price">GHS 100</span>
+                    </label>
+                  {%- endif -%}
+                </fieldset>
+              {%- endfor -%}
+            {%- else -%}
+              {%- liquid
+                assign p_sets = current_variant.metafields.custom.product_sets.value | default: current_variant.metafields.custom.product_sets | default: product.metafields.custom.product_sets.value | default: product.metafields.custom.product_sets
+              -%}
+              <fieldset
+                class="lux_portrait_options lux_refill_fieldset"
+                id="lux-refill-fieldset-{{ product.id }}"
+                data-variant-id="{{ current_variant.id }}"
+              >
+                <legend class="lux_portrait_legend">Choose a piece</legend>
+                {%- if p_sets.first != blank or p_sets.size > 0 -%}
+                  {%- for piece in p_sets -%}
+                    {%- liquid
+                      assign piece_title = ''
+                      if piece.product != blank
+                        if piece.title != blank and piece.title != 'Default Title'
+                          assign piece_title = piece.product.title | append: ' (' | append: piece.title | append: ')'
+                        else
+                          assign piece_title = piece.product.title
+                        endif
+                      elsif piece.title != blank and piece.title != 'Default Title'
+                        assign piece_title = piece.title
+                      elsif piece.name != blank
+                        assign piece_title = piece.name
+                      elsif piece.product_title != blank
+                        assign piece_title = piece.product_title
+                      else
+                        assign piece_title = piece
+                      endif
+
+                      assign piece_available = true
+                      assign piece_variant_id = piece.id | default: piece
+                      assign piece_price = 'GHS 250'
+
+                      if piece.product != blank
+                        assign piece_available = piece.available
+                        assign piece_variant_id = piece.id
+                        if piece.price != blank
+                          assign piece_price = piece.price | money
+                        endif
+                      elsif piece.variants != blank
+                        assign piece_available = piece.available
+                        assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id
+                        if piece.price != blank
+                          assign piece_price = piece.price | money
+                        endif
+                      elsif piece.available != nil
+                        assign piece_available = piece.available
+                        assign piece_variant_id = piece.selected_or_first_available_variant.id | default: piece.variants.first.id | default: piece.id | default: piece
+                        if piece.price != blank
+                          assign piece_price = piece.price | money
+                        endif
+                      endif
+                    -%}
+                    <label class="lux_opt {% if forloop.first %}lux_selected{% endif %} {% unless piece_available %}lux_opt_soldout{% endunless %}">
+                      <input
+                        type="radio"
+                        name="lux_refill_piece_single"
+                        class="lux_refill_radio"
+                        value="{{ piece_variant_id }}"
+                        data-piece-name="{{ piece_title | escape }}"
+                        data-available="{{ piece_available }}"
+                        {% if forloop.first %}checked{% endif %}
+                        onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');"
+                      >
+                      <span><span class="lux_o_name">{{ piece_title }}</span></span>
+                      <span class="lux_o_price">{% if piece_available %}{{ piece_price }}{% else %}Sold out{% endif %}</span>
+                    </label>
+                  {%- endfor -%}
+                {%- else -%}
+                  <label class="lux_opt lux_selected">
+                    <input type="radio" name="lux_refill_piece_single" class="lux_refill_radio" value="wash" data-piece-name="Wash" checked onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                    <span><span class="lux_o_name">Wash</span></span>
+                    <span class="lux_o_price">GHS 250</span>
+                  </label>
+                  <label class="lux_opt">
+                    <input type="radio" name="lux_refill_piece_single" class="lux_refill_radio" value="cream" data-piece-name="Cream" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                    <span><span class="lux_o_name">Cream</span></span>
+                    <span class="lux_o_price">GHS 250</span>
+                  </label>
+                  <label class="lux_opt">
+                    <input type="radio" name="lux_refill_piece_single" class="lux_refill_radio" value="spray" data-piece-name="{% if line == 'him' %}Deodorizing body spray{% else %}Mist{% endif %}" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                    <span><span class="lux_o_name">{% if line == 'him' %}Deodorizing body spray{% else %}Mist{% endif %}</span></span>
+                    <span class="lux_o_price">GHS 250</span>
+                  </label>
+                  <label class="lux_opt">
+                    <input type="radio" name="lux_refill_piece_single" class="lux_refill_radio" value="cloth" data-piece-name="Exfoliating cloth" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
+                    <span><span class="lux_o_name">Exfoliating cloth</span></span>
+                    <span class="lux_o_price">GHS 100</span>
+                  </label>
+                {%- endif -%}
+              </fieldset>
+            {%- endif -%}
+
+            <button type="button" class="lux_btn_line" id="lux-refill-btn">Add refill to bag</button>
+            <p class="lux_added" id="lux-refill-msg" aria-live="polite"></p>
+          </div>
+        </details>
+      {%- endif -%}
+
+      {%- comment -%} Product Description & Editorial Notes {%- endcomment -%}
+      {%- if product.description != blank -%}
+        <div class="lux_product_description" style="margin-top: 24px; font-size: 18px; line-height: 1.6; color: var(--lux-ivory);">
+          {{ product.description }}
+        </div>
+      {%- endif -%}
+
+      <div class="lux_product_notes">
+        <p>Delivery within Accra is included. Outside Accra, sets travel by VIP bus.</p>
+        <p>Every set arrives wrapped, with a card. Check it when it arrives; if anything is damaged, incomplete, or not what you ordered, message us and we'll put it right.</p>
+        <p>Want to smell it first? <a href="/pages/house-call">Book a House Call</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const sectionEl = document.getElementById('lux-product-{{ section.id }}');
+    if (!sectionEl) return;
+
+    const minusBtn = sectionEl.querySelector('#lux-qty-minus');
+    const plusBtn = sectionEl.querySelector('#lux-qty-plus');
+    const qtyInput = sectionEl.querySelector('#lux-qty-input');
+    const addBtn = sectionEl.querySelector('#lux-add-to-cart-btn');
+    const form = sectionEl.querySelector('#lux-product-form');
+    const msgEl = sectionEl.querySelector('#lux-added-msg');
+
+    if (minusBtn && plusBtn && qtyInput) {
+      minusBtn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value, 10) || 1;
+        qtyInput.value = Math.max(1, val - 1);
+      });
+      plusBtn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value, 10) || 1;
+        qtyInput.value = Math.min(99, val + 1);
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const selectedVariantInput = sectionEl.querySelector('#lux-selected-variant-id');
+        const mainVariantId = parseInt(selectedVariantInput ? selectedVariantInput.value : '{{ current_variant.id }}', 10);
+        const qty = parseInt(qtyInput ? qtyInput.value : '1', 10) || 1;
+        const checkedRadio = sectionEl.querySelector('input[name="lux_variant_choice"]:checked');
+
+        let setItems = [];
+        if (checkedRadio && checkedRadio.dataset.setItems) {
+          try {
+            setItems = JSON.parse(checkedRadio.dataset.setItems);
+          } catch (err) {}
+        }
+
+        const bundleId = 'bundle_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+        const itemsToAdd = [];
+
+        itemsToAdd.push({
+          id: mainVariantId,
+          quantity: qty,
+          properties: {
+            _bundle_id: bundleId,
+            _bundle_role: 'main'
+          }
+        });
+
+        setItems.forEach(item => {
+          const pieceId = parseInt(item.id, 10);
+          if (pieceId && !isNaN(pieceId)) {
+            itemsToAdd.push({
+              id: pieceId,
+              quantity: qty,
+              properties: {
+                _bundle_id: bundleId,
+                _bundle_role: 'sub',
+                _bundle_main_name: {{ product.title | json }},
+                _bundle_parent_id: String(mainVariantId)
+              }
+            });
+          }
+        });
+
+        if (addBtn) {
+          addBtn.disabled = true;
+          const origText = addBtn.textContent;
+          addBtn.textContent = 'Adding...';
+
+          try {
+            const res = await fetch('{{ routes.cart_add_url | append: ".js" }}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({ items: itemsToAdd })
+            });
+
+            if (res.ok) {
+              if (msgEl) {
+                msgEl.innerHTML = `Set added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+              }
+              document.dispatchEvent(new CustomEvent('cart:updated'));
+              window.dispatchEvent(new CustomEvent('cart:refresh'));
+            } else {
+              const errData = await res.json();
+              if (msgEl) {
+                msgEl.textContent = errData.description || errData.message || 'Could not add set to bag.';
+              }
+            }
+          } catch (err) {
+            if (msgEl) {
+              msgEl.textContent = 'Error adding set to bag.';
+            }
+          } finally {
+            addBtn.disabled = false;
+            addBtn.textContent = origText;
+          }
+        }
+      });
+    }
+
+    // Switch refill pieces when bundle variant changes
+    function updateRefillFieldset(variantId) {
+      const allFieldsets = sectionEl.querySelectorAll('.lux_refill_fieldset');
+      allFieldsets.forEach(fs => {
+        if (fs.dataset.variantId === String(variantId)) {
+          fs.style.display = 'grid';
+        } else {
+          fs.style.display = 'none';
+        }
+      });
+    }
+
+    const variantRadios = sectionEl.querySelectorAll('input[name="lux_variant_choice"]');
+    variantRadios.forEach(radio => {
+      radio.addEventListener('change', function () {
+        updateRefillFieldset(this.value);
+      });
+    });
+
+    const refillBtn = sectionEl.querySelector('#lux-refill-btn');
+    const refillMsg = sectionEl.querySelector('#lux-refill-msg');
+    if (refillBtn && refillMsg) {
+      refillBtn.addEventListener('click', async () => {
+        const visibleFieldset = Array.from(sectionEl.querySelectorAll('.lux_refill_fieldset')).find(fs => fs.style.display !== 'none') || sectionEl.querySelector('.lux_refill_fieldset');
+        const checkedRadio = visibleFieldset ? visibleFieldset.querySelector('input.lux_refill_radio:checked') : null;
+        
+        if (!checkedRadio) return;
+
+        const pieceName = checkedRadio.dataset.pieceName || checkedRadio.closest('.lux_opt')?.querySelector('.lux_o_name')?.textContent || 'Refill';
+        if (checkedRadio.dataset.available === 'false') {
+          refillMsg.textContent = `${pieceName} is currently sold out.`;
+          return;
+        }
+
+        const variantId = checkedRadio.value;
+        const isNumericId = /^\d+$/.test(variantId);
+
+        refillBtn.disabled = true;
+        const origText = refillBtn.textContent;
+        refillBtn.textContent = 'Adding...';
+
+        if (isNumericId) {
+          try {
+            const res = await fetch('{{ routes.cart_add_url | append: ".js" }}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                items: [{
+                  id: parseInt(variantId, 10),
+                  quantity: 1
+                }]
+              })
+            });
+
+            if (res.ok) {
+              refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+              document.dispatchEvent(new CustomEvent('cart:updated'));
+            } else {
+              const errData = await res.json();
+              refillMsg.textContent = errData.description || 'Could not add refill to bag.';
+            }
+          } catch (err) {
+            refillMsg.textContent = 'Error adding refill to bag.';
+          } finally {
+            refillBtn.disabled = false;
+            refillBtn.textContent = origText;
+          }
+        } else {
+          refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+          refillBtn.disabled = false;
+          refillBtn.textContent = origText;
+        }
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxé Bundle Product",
+  "tag": "section",
+  "class": "lux_product_section_wrapper lux_bundle_wrapper",
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "default_mood",
+      "label": "Default Mood Text",
+      "default": "Soft and floral"
+    },
+    {
+      "type": "color",
+      "id": "default_tone",
+      "label": "Default Gradient Tone",
+      "default": "#3B2A24"
+    },
+    {
+      "type": "checkbox",
+      "id": "signature_available",
+      "label": "Signature Tier Available",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_refills",
+      "label": "Show Refills Option",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_only_discounted_price",
+      "label": "Show only discounted price",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxé Bundle Product"
+    }
+  ]
+}
+{% endschema %}

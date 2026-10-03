@@ -10,12 +10,13 @@
 {
   "sections": {
     "main": {
-      "type": "new-product",
+      "type": "product-bundle",
       "settings": {
         "default_mood": "{{ product.title }}",
         "default_tone": "#3b2a24",
         "signature_available": false,
-        "show_refills": true
+        "show_refills": true,
+        "show_only_discounted_price": false
       }
     },
     "lux_three_forms": {
