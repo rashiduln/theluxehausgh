@@ -1,5 +1,5 @@
 {%- liquid
-  assign current_variant = product.selected_or_first_available_variant
+  assign current_variant = product.selected_or_first_available_variant | default: product.variants.first
   assign line = product.metafields.custom.line | default: 'her'
   assign mood = product.metafields.custom.mood | default: section.settings.default_mood
   assign tone = product.metafields.custom.tone_color | default: section.settings.default_tone | default: '#3B2A24'
@@ -259,7 +259,7 @@
         {%- else -%}
           {%- comment -%} Single Variant / Non-variant Bundle Product {%- endcomment -%}
           {%- liquid
-            assign single_set_items = product.metafields.custom.product_sets.value | default: product.selected_or_first_available_variant.metafields.custom.product_sets.value
+            assign single_set_items = current_variant.metafields.custom.product_sets.value | default: current_variant.metafields.custom.product_sets | default: product.metafields.custom.product_sets.value | default: product.metafields.custom.product_sets
             assign single_sub_text_parts = ''
             if single_set_items.first != blank or single_set_items.size > 0
               for piece in single_set_items
@@ -306,7 +306,7 @@
             endif
 
             if single_sub_text == blank
-              assign single_sub_text = product.metafields.custom.contents_description.value | default: product.metafields.custom.contents_description
+              assign single_sub_text = current_variant.metafields.custom.contents_description.value | default: current_variant.metafields.custom.contents_description | default: product.metafields.custom.contents_description.value | default: product.metafields.custom.contents_description
             endif
 
             # 1. Calculate Set Total Price for single bundle
@@ -322,15 +322,17 @@
             endif
 
             if has_single_piece_prices == false or single_set_total == 0
-              if product.compare_at_price > product.price
+              if current_variant.compare_at_price > current_variant.price
+                assign single_set_total = current_variant.compare_at_price
+              elsif product.compare_at_price > product.price
                 assign single_set_total = product.compare_at_price
               else
-                assign single_set_total = product.price
+                assign single_set_total = current_variant.price | default: product.price
               endif
             endif
 
             # 2. Determine Discounted / Bundle Price for single bundle
-            assign raw_single_bundle_price = product.metafields.custom.bundle_price.value | default: product.metafields.custom.bundle_price
+            assign raw_single_bundle_price = current_variant.metafields.custom.bundle_price.value | default: current_variant.metafields.custom.bundle_price | default: product.metafields.custom.bundle_price.value | default: product.metafields.custom.bundle_price
             assign single_discounted_formatted = ''
             assign single_discounted_cents = 0
 
@@ -340,7 +342,7 @@
                 assign single_discounted_formatted = raw_str
               else
                 assign num_val = raw_single_bundle_price | times: 1
-                if num_val < 5000 and product.price >= 5000
+                if num_val < 5000 and current_variant.price >= 5000
                   assign single_discounted_cents = num_val | times: 100
                   assign single_discounted_formatted = single_discounted_cents | money
                 else
@@ -349,8 +351,8 @@
                 endif
               endif
             else
-              assign single_discounted_cents = product.price
-              assign single_discounted_formatted = product.price | money
+              assign single_discounted_cents = current_variant.price | default: product.price
+              assign single_discounted_formatted = single_discounted_cents | money
             endif
           -%}
           {%- capture single_set_items_json -%}
@@ -560,7 +562,7 @@
               {%- endfor -%}
             {%- else -%}
               {%- liquid
-                assign p_sets = product.metafields.custom.product_sets.value | default: product.metafields.custom.product_sets
+                assign p_sets = current_variant.metafields.custom.product_sets.value | default: current_variant.metafields.custom.product_sets | default: product.metafields.custom.product_sets.value | default: product.metafields.custom.product_sets
               -%}
               <fieldset
                 class="lux_portrait_options lux_refill_fieldset"
