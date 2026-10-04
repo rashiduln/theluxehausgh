@@ -235,7 +235,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>Signature isn't offered in Bourbon Routine, because there's no matching room mist. We only build a set when every piece is real.</p>",
+                "text": "<p>Signature isn't offered in Signature isn't offered in {{ closest.product.title }}, because there's no matching room mist. We only build a set when every piece is real. because there's no matching room mist. We only build a set when every piece is real.</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
