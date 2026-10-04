@@ -1,0 +1,398 @@
+{%- liquid
+  assign target_product = block.settings.product
+  if request.visual_preview_mode and target_product == blank
+    assign target_product = collections.all.products.first | default: all_products.first
+  endif
+-%}
+
+{%- if target_product != blank -%}
+  {%- liquid
+    # 1. Option Title: Product short_name metafield (metaobject, list of metaobjects, or string), fallback to product title
+    assign raw_short_name = target_product.metafields.custom.short_name.value | default: target_product.metafields.custom.short_name
+    assign short_name_str = ''
+    if raw_short_name != blank
+      if raw_short_name.first != blank or raw_short_name.size > 0
+        assign sn_parts = ''
+        for mo in raw_short_name
+          assign mo_val = mo.name | default: mo.label | default: mo.title | default: mo.value | default: mo.short_name | default: mo
+          if mo_val != blank
+            if sn_parts == ''
+              assign sn_parts = mo_val
+            else
+              assign sn_parts = sn_parts | append: ' + ' | append: mo_val
+            endif
+          endif
+        endfor
+        assign short_name_str = sn_parts
+      else
+        assign short_name_str = raw_short_name.name | default: raw_short_name.label | default: raw_short_name.title | default: raw_short_name.value | default: raw_short_name.short_name | default: raw_short_name
+      endif
+    endif
+
+    assign option_title = block.settings.title | default: short_name_str
+    if option_title == blank
+      assign option_title = target_product.title
+    endif
+
+    # 2. Description: Subtitle metafield (metaobject, list, or text), fallback to contents summary
+    assign raw_subtitle = target_product.metafields.custom.subtitle.value | default: target_product.metafields.custom.subtitle
+    assign subtitle_str = ''
+    if raw_subtitle != blank
+      if raw_subtitle.first != blank or raw_subtitle.size > 0
+        assign sub_parts = ''
+        for sub_item in raw_subtitle
+          assign sub_val = sub_item.name | default: sub_item.label | default: sub_item.title | default: sub_item.value | default: sub_item
+          if sub_val != blank
+            if sub_parts == ''
+              assign sub_parts = sub_val
+            else
+              assign sub_parts = sub_parts | append: ', ' | append: sub_val
+            endif
+          endif
+        endfor
+        assign subtitle_str = sub_parts
+      else
+        assign subtitle_str = raw_subtitle.name | default: raw_subtitle.label | default: raw_subtitle.title | default: raw_subtitle.value | default: raw_subtitle
+      endif
+    endif
+
+    assign option_subtitle = block.settings.subtitle | default: subtitle_str
+    if option_subtitle == blank
+      assign p_sets = target_product.metafields.custom.product_sets.value | default: target_product.metafields.custom.product_sets
+      if p_sets != blank
+        assign set_pieces = ''
+        for p in p_sets
+          assign p_name = p.metafields.custom.short_name.value | default: p.title
+          if p_name != blank
+            if set_pieces == ''
+              assign set_pieces = p_name
+            else
+              assign set_pieces = set_pieces | append: ', ' | append: p_name
+            endif
+          endif
+        endfor
+        assign option_subtitle = set_pieces
+      endif
+    endif
+
+    if option_subtitle == blank and target_product.metafields.custom.contents_description.value != blank
+      assign option_subtitle = target_product.metafields.custom.contents_description.value
+    endif
+
+    assign current_page_product = closest.product | default: product
+    assign is_current_product = false
+    if current_page_product != blank and current_page_product.id == target_product.id
+      assign is_current_product = true
+    endif
+
+    # 3. Calculate related product price & compare at price
+    assign current_variant = target_product.selected_or_first_available_variant
+    assign is_available = target_product.available
+    assign product_price = current_variant.price | default: target_product.price
+    assign price_formatted = product_price | money
+
+    assign set_sum_price = 0
+    assign has_piece_sum = false
+    if p_sets.first != blank or p_sets.size > 0
+      for piece_item in p_sets
+        assign piece_var = piece_item.selected_or_first_available_variant
+        assign p_item_price = piece_var.price | default: piece_item.price
+        if p_item_price != blank and p_item_price > 0
+          assign set_sum_price = set_sum_price | plus: p_item_price
+          assign has_piece_sum = true
+        endif
+      endfor
+    endif
+
+    assign compare_price_cents = 0
+    if has_piece_sum and set_sum_price > product_price
+      assign compare_price_cents = set_sum_price
+    elsif target_product.compare_at_price > product_price
+      assign compare_price_cents = target_product.compare_at_price
+    elsif current_variant.compare_at_price > product_price
+      assign compare_price_cents = current_variant.compare_at_price
+    endif
+
+    assign compare_price_formatted = ''
+    if compare_price_cents > product_price
+      assign compare_price_formatted = compare_price_cents | money
+    endif
+  -%}
+
+  <div class="lux_portrait_block_wrapper" id="lux-portrait-block-{{ block.id }}" {{ block.shopify_attributes }}>
+    {%- if is_current_product -%}
+      <div
+        class="lux_opt lux_portrait_card lux_selected {% unless is_available %}lux_opt_soldout{% endunless %}"
+        aria-current="page"
+      >
+        <span class="lux_opt_radio_indicator" aria-hidden="true"></span>
+        <span class="lux_opt_body">
+          <span class="lux_o_name">{{ option_title }}</span>
+          {%- if option_subtitle != blank -%}
+            <span class="lux_o_contents">{{ option_subtitle }}</span>
+          {%- endif -%}
+        </span>
+        <span class="lux_o_price">
+          {%- if is_available -%}
+            {%- if compare_price_formatted != blank -%}
+              <s class="lux_o_compare_price">{{ compare_price_formatted }}</s>
+            {%- endif -%}
+            <span class="lux_o_final_price">{{ price_formatted }}</span>
+          {%- else -%}
+            <span class="lux_soldout_badge">Sold out</span>
+          {%- endif -%}
+        </span>
+      </div>
+    {%- else -%}
+      <a
+        href="{{ target_product.url }}"
+        class="lux_opt lux_portrait_card {% unless is_available %}lux_opt_soldout{% endunless %}"
+      >
+        <span class="lux_opt_radio_indicator" aria-hidden="true"></span>
+        <span class="lux_opt_body">
+          <span class="lux_o_name">{{ option_title }}</span>
+          {%- if option_subtitle != blank -%}
+            <span class="lux_o_contents">{{ option_subtitle }}</span>
+          {%- endif -%}
+        </span>
+        <span class="lux_o_price">
+          {%- if is_available -%}
+            {%- if compare_price_formatted != blank -%}
+              <s class="lux_o_compare_price">{{ compare_price_formatted }}</s>
+            {%- endif -%}
+            <span class="lux_o_final_price">{{ price_formatted }}</span>
+          {%- else -%}
+            <span class="lux_soldout_badge">Sold out</span>
+          {%- endif -%}
+        </span>
+      </a>
+    {%- endif -%}
+  </div>
+
+  <style>
+    .lux_portrait_block_wrapper {
+      margin: 8px 0;
+      width: 100%;
+    }
+    .lux_portrait_card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid var(--lux-rule, rgba(201, 180, 138, 0.22));
+      padding: 14px 16px;
+      background: rgba(59, 42, 36, 0.18);
+      text-decoration: none;
+      color: var(--lux-ivory, #EDE6DA);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .lux_portrait_card:hover:not(.lux_selected) {
+      border-color: var(--lux-ember, #D8611A);
+      background: rgba(69, 42, 36, 0.35);
+      color: var(--lux-ivory, #EDE6DA);
+    }
+    .lux_portrait_card.lux_selected {
+      border-color: var(--lux-ember, #D8611A);
+      background: rgba(69, 42, 36, 0.35);
+      cursor: default;
+    }
+    .lux_portrait_card .lux_opt_radio_indicator {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid var(--lux-rule, rgba(201, 180, 138, 0.4));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .lux_portrait_card:hover:not(.lux_selected) .lux_opt_radio_indicator {
+      border-color: var(--lux-ember, #D8611A);
+    }
+    .lux_portrait_card.lux_selected .lux_opt_radio_indicator {
+      border-color: var(--lux-ember, #D8611A);
+      background: radial-gradient(circle at center, var(--lux-ember, #D8611A) 42%, transparent 48%);
+    }
+    .lux_portrait_card .lux_o_name {
+      font-family: var(--lux-display, "Cinzel", Georgia, serif);
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      display: block;
+      color: var(--lux-ivory, #EDE6DA);
+      line-height: 1.25;
+    }
+    .lux_portrait_card .lux_o_contents {
+      font-size: 15px;
+      color: var(--lux-muted, #A89C8C);
+      display: block;
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+    .lux_portrait_card .lux_o_price {
+      font-size: 17px;
+      white-space: nowrap;
+      text-align: right;
+      color: var(--lux-champagne, #C9B48A);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .lux_portrait_card .lux_o_compare_price {
+      font-size: 14px;
+      color: var(--lux-muted, #A89C8C);
+      text-decoration: line-through;
+    }
+    .lux_portrait_card .lux_soldout_badge {
+      font-size: 14px;
+      color: var(--lux-muted, #A89C8C);
+    }
+
+    /* Seamless View Transition Animations */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.22s;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+
+  {%- if block.settings.enable_smooth_transition -%}
+    <script>
+      (function() {
+        if (window.__luxSetsVariantTransitionInit) return;
+        window.__luxSetsVariantTransitionInit = true;
+
+        document.addEventListener('click', async function(e) {
+          // Allow opening in new tab via Cmd/Ctrl/Shift/Middle-click
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+
+          // Strictly scope to this block's variant card links
+          const link = e.target.closest('.lux_portrait_block_wrapper .lux_portrait_card[href]');
+          if (!link) return; // Do not touch any other link on the site!
+
+          const targetUrl = link.getAttribute('href');
+          if (!targetUrl || targetUrl.startsWith('#') || targetUrl.startsWith('javascript:')) return;
+
+          // Only handle internal product URLs for this block
+          if (!targetUrl.includes('/products/')) return;
+
+          e.preventDefault();
+
+          // Visual feedback on the clicked card
+          document.querySelectorAll('.lux_portrait_card').forEach(function(c) {
+            c.classList.remove('lux_selected');
+          });
+          link.classList.add('lux_selected');
+
+          // Find the container to transition
+          const productSection = link.closest('.section') || link.closest('.product-information') || link.closest('.lux_product_main') || document.querySelector('main') || document.getElementById('app');
+
+          try {
+            if (productSection) {
+              productSection.style.transition = 'opacity 0.18s ease';
+              productSection.style.opacity = '0.6';
+              productSection.style.pointerEvents = 'none';
+            }
+
+            const res = await fetch(targetUrl);
+            if (!res.ok) throw new Error('Fetch failed');
+            const html = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const performSwap = function() {
+              if (doc.title) {
+                document.title = doc.title;
+              }
+
+              const newProductSection = doc.querySelector('.section[data-testid*="product"]') || doc.querySelector('.product-information') || doc.querySelector('.lux_product_main') || doc.querySelector('main');
+              
+              if (newProductSection && productSection) {
+                productSection.innerHTML = newProductSection.innerHTML;
+                Array.from(newProductSection.attributes).forEach(function(attr) {
+                  productSection.setAttribute(attr.name, attr.value);
+                });
+              } else {
+                const currentMain = document.querySelector('main');
+                const newMain = doc.querySelector('main');
+                if (currentMain && newMain) {
+                  currentMain.innerHTML = newMain.innerHTML;
+                } else {
+                  window.location.href = targetUrl;
+                  return;
+                }
+              }
+
+              // Update browser URL without reloading
+              window.history.pushState({ path: targetUrl, isLuxSetsVariant: true }, '', targetUrl);
+
+              if (productSection) {
+                productSection.style.opacity = '1';
+                productSection.style.pointerEvents = '';
+              }
+
+              // Re-dispatch events for theme scripts
+              window.dispatchEvent(new Event('resize'));
+              document.dispatchEvent(new CustomEvent('shopify:section:load'));
+            };
+
+            if (document.startViewTransition) {
+              document.startViewTransition(performSwap);
+            } else {
+              performSwap();
+            }
+          } catch (err) {
+            window.location.href = targetUrl;
+          }
+        });
+
+        // Only handle popstate if navigated via this block
+        window.addEventListener('popstate', function(e) {
+          if (e.state && e.state.isLuxSetsVariant) {
+            window.location.reload();
+          }
+        });
+      })();
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Sets Variant",
+  "tag": null,
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title Override (Optional)",
+      "info": "Leave blank to use the product's Short Name metafield or Title."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle Override (Optional)",
+      "info": "Leave blank to use the product's Subtitle metafield."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_smooth_transition",
+      "label": "Enable smooth page change transition",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sets Variant"
+    }
+  ]
+}
+{% endschema %}
