@@ -420,6 +420,9 @@
       "block_order": [
         "disclosures_g9mWze"
       ],
+      "custom_css": [
+        "p a{color: #d86119;}"
+      ],
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",
