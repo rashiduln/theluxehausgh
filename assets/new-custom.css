@@ -170,7 +170,7 @@
 .lux_hero_h1 {
   font-family: var(--lux-text);
   font-weight: 400;
-  font-size: clamp(44px, 6.6vw, 88px);
+  font-size: clamp(44px, 6.6vw, 80px);
   line-height: 1.03;
   letter-spacing: -.01em;
   margin: 0 0 26px;
