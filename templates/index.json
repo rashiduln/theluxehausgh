@@ -658,6 +658,7 @@
     },
     "lux_cloth": {
       "type": "lux-exfoliating-cloth",
+      "disabled": true,
       "settings": {
         "heading": "The part of the routine that does the work.",
         "description": "Our exfoliating cloth is woven net, finished with African print. It clears the skin before the wash, so everything after it lands better. It comes in every Elevated and Signature set, and it's the first piece that carries our own name.",
