@@ -107,7 +107,7 @@
 
 /* Common Section Wrapper */
 .lux_band {
-  padding: 96px 0;
+  padding: 70px 0;
   border-bottom: 1px solid var(--lux-rule);
   background-color: var(--lux-ground);
 }
