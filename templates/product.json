@@ -87,7 +87,7 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "group_icgrde": {
+            "group_TKTEwA": {
               "type": "group",
               "name": "t:names.header",
               "settings": {
@@ -127,7 +127,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_xrnftG": {
+                "text_pBmpbe": {
                   "type": "text",
                   "name": "t:names.product_title",
                   "settings": {
@@ -153,7 +153,33 @@
                   },
                   "blocks": {}
                 },
-                "price_tVjtKg": {
+                "text_qdGcep": {
+                  "type": "text",
+                  "name": "subtitle",
+                  "settings": {
+                    "text": "<p>{{ closest.product.metafields.custom.subtitle.value }}</p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1.125rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "{{ settings.color_palette.color6 }}",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "price_AHzxXT": {
                   "type": "price",
                   "settings": {
                     "show_sale_price_first": true,
@@ -177,8 +203,9 @@
                 }
               },
               "block_order": [
-                "text_xrnftG",
-                "price_tVjtKg"
+                "text_pBmpbe",
+                "text_qdGcep",
+                "price_AHzxXT"
               ]
             },
             "divider_VJhene": {
@@ -314,7 +341,7 @@
             }
           },
           "block_order": [
-            "group_icgrde",
+            "group_TKTEwA",
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
