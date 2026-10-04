@@ -49,14 +49,14 @@
           "type": "menu",
           "settings": {
             "title": "Experience",
-            "menu": ""
+            "menu": "footer-2"
           }
         },
         "menu_client_care": {
           "type": "menu",
           "settings": {
             "title": "Client Care",
-            "menu": ""
+            "menu": "client-care"
           }
         }
       },
