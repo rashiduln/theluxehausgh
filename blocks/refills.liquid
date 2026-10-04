@@ -51,12 +51,30 @@
             <legend class="lux_portrait_legend">Choose a piece</legend>
             {%- for piece in p_bundle_sets -%}
               {%- liquid
-                # Check for metafield.custom.short_name, fallback to title
+                # Check for metafield.custom.short_name (metaobject / list of metaobjects), fallback to title
+                assign raw_short_name = piece.metafields.custom.short_name.value | default: piece.metafields.custom.short_name
+                if raw_short_name == blank and piece.product != blank
+                  assign raw_short_name = piece.product.metafields.custom.short_name.value | default: piece.product.metafields.custom.short_name
+                endif
+
                 assign piece_short_name = ''
-                if piece.metafields.custom.short_name != blank
-                  assign piece_short_name = piece.metafields.custom.short_name.value | default: piece.metafields.custom.short_name
-                elsif piece.product != blank and piece.product.metafields.custom.short_name != blank
-                  assign piece_short_name = piece.product.metafields.custom.short_name.value | default: piece.product.metafields.custom.short_name
+                if raw_short_name != blank
+                  if raw_short_name.first != blank or raw_short_name.size > 0
+                    assign short_name_parts = ''
+                    for mo in raw_short_name
+                      assign mo_text = mo.name | default: mo.label | default: mo.title | default: mo.value | default: mo.short_name | default: mo
+                      if mo_text != blank
+                        if short_name_parts == ''
+                          assign short_name_parts = mo_text
+                        else
+                          assign short_name_parts = short_name_parts | append: ' + ' | append: mo_text
+                        endif
+                      endif
+                    endfor
+                    assign piece_short_name = short_name_parts
+                  else
+                    assign piece_short_name = raw_short_name.name | default: raw_short_name.label | default: raw_short_name.title | default: raw_short_name.value | default: raw_short_name.short_name | default: raw_short_name
+                  endif
                 endif
 
                 if piece_short_name != blank
