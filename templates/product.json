@@ -200,26 +200,40 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "text_KFdzWA": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>Signature isn't offered in Bourbon Routine, because there's no matching room mist. We only build a set when every piece is real.</p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "{{ settings.color_palette.color2 }}",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "text_pBmpbe",
                 "text_qdGcep",
-                "price_AHzxXT"
+                "price_AHzxXT",
+                "text_KFdzWA"
               ]
-            },
-            "divider_VJhene": {
-              "type": "_divider",
-              "name": "t:names.divider",
-              "settings": {
-                "thickness": 1,
-                "corner_radius": "square",
-                "divider_color": "{{ settings.color_palette.color2 }}",
-                "width_percent": 100,
-                "padding-block-start": 0,
-                "padding-block-end": 0
-              },
-              "blocks": {}
             },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
@@ -338,14 +352,40 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "text_gHbmf9": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Delivery within Accra is included. Outside Accra, sets travel by VIP bus.</p><p>Every set arrives wrapped, with a card. Check it when it arrives; if anything is damaged, incomplete, or not what you ordered, message us and we'll put it right.</p><p>Want to smell it first?&nbsp;<a href=\"https://theluxehausgh.myshopify.com/pages/house-call\">Book a House Call</a>.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#a89c8c",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "group_TKTEwA",
-            "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
-            "text_aEtTtq"
+            "text_aEtTtq",
+            "text_gHbmf9"
           ]
         }
       },
