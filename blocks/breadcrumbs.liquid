@@ -1,9 +1,5 @@
 {% liquid
   assign product_resource = block.settings.product | default: closest.product | default: product
- 
-  
-
-
 %}
 
 {%- if product_resource != blank -%}
