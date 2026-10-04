@@ -993,58 +993,6 @@
         "padding-block-end": 60
       }
     },
-    "lux_gifts": {
-      "type": "lux-gift-showcase",
-      "blocks": {
-        "gift_1": {
-          "type": "gift_tile",
-          "settings": {
-            "product": "",
-            "title": "Mahogany Teakwood",
-            "meta": "Warm and grounded. Signature available",
-            "price_text": "From GHS 600",
-            "tone_color": "#34211a",
-            "bottle_shape": "spray",
-            "link": ""
-          }
-        },
-        "gift_2": {
-          "type": "gift_tile",
-          "settings": {
-            "product": "",
-            "title": "Champagne Toast",
-            "meta": "Bright and celebratory. Signature available",
-            "price_text": "From GHS 600",
-            "tone_color": "#3d3122",
-            "bottle_shape": "spray",
-            "link": ""
-          }
-        },
-        "gift_3": {
-          "type": "gift_tile",
-          "settings": {
-            "product": "",
-            "title": "The Trio Gift Set",
-            "meta": "For him",
-            "price_text": "GHS 600",
-            "tone_color": "#2e231c",
-            "bottle_shape": "spray",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "gift_1",
-        "gift_2",
-        "gift_3"
-      ],
-      "disabled": true,
-      "settings": {
-        "heading": "A gift that says something about the giver.",
-        "intro": "Every set arrives wrapped. Add a card message at checkout.",
-        "footnote": "The Distinguished Gentleman in Mahogany Teakwood and The Distinguished Woman in Champagne Toast. His warm and deep, hers bright. Two scents made to stand next to each other."
-      }
-    },
     "lux_proof": {
       "type": "lux-proof",
       "blocks": {
@@ -1099,7 +1047,6 @@
     "lux_moods",
     "lux_cloth",
     "product_list_eBpBJC",
-    "lux_gifts",
     "lux_proof",
     "lux_story"
   ]
