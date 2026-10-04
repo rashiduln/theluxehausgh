@@ -166,7 +166,10 @@
   gap: 56px;
   align-items: end;
 }
-
+.shopify-policy__container {
+    width: 1000px;
+    max-width: 1000px; 
+}
 .lux_hero_h1 {
   font-family: var(--lux-text);
   font-weight: 400;
