@@ -1,178 +1,209 @@
 {%- liquid
-  assign target_product = block.settings.product
-  if request.visual_preview_mode and target_product == blank
-    assign target_product = collections.all.products.first | default: all_products.first
+  assign current_page_product = closest.product | default: product
+  assign sets_variants = current_page_product.metafields.custom.sets_variant.value | default: current_page_product.metafields.custom.sets_variant
+
+  if sets_variants == blank and product != blank
+    assign sets_variants = product.metafields.custom.sets_variant.value | default: product.metafields.custom.sets_variant
+  endif
+
+  if request.visual_preview_mode and sets_variants == blank
+    assign sets_variants = collections.all.products | slice: 0, 3
+    if sets_variants == blank
+      assign sets_variants = all_products
+    endif
   endif
 -%}
 
-{%- if target_product != blank -%}
-  {%- liquid
-    # 1. Option Title: Product short_name metafield (metaobject, list of metaobjects, or string), fallback to product title
-    assign raw_short_name = target_product.metafields.custom.short_name.value | default: target_product.metafields.custom.short_name
-    assign short_name_str = ''
-    if raw_short_name != blank
-      if raw_short_name.first != blank or raw_short_name.size > 0
-        assign sn_parts = ''
-        for mo in raw_short_name
-          assign mo_val = mo.name | default: mo.label | default: mo.title | default: mo.value | default: mo.short_name | default: mo
-          if mo_val != blank
-            if sn_parts == ''
-              assign sn_parts = mo_val
-            else
-              assign sn_parts = sn_parts | append: ' + ' | append: mo_val
-            endif
-          endif
-        endfor
-        assign short_name_str = sn_parts
-      else
-        assign short_name_str = raw_short_name.name | default: raw_short_name.label | default: raw_short_name.title | default: raw_short_name.value | default: raw_short_name.short_name | default: raw_short_name
-      endif
-    endif
-
-    assign option_title = block.settings.title | default: short_name_str
-    if option_title == blank
-      assign option_title = target_product.title
-    endif
-
-    # 2. Description: Subtitle metafield (metaobject, list, or text), fallback to contents summary
-    assign raw_subtitle = target_product.metafields.custom.subtitle.value | default: target_product.metafields.custom.subtitle
-    assign subtitle_str = ''
-    if raw_subtitle != blank
-      if raw_subtitle.first != blank or raw_subtitle.size > 0
-        assign sub_parts = ''
-        for sub_item in raw_subtitle
-          assign sub_val = sub_item.name | default: sub_item.label | default: sub_item.title | default: sub_item.value | default: sub_item
-          if sub_val != blank
-            if sub_parts == ''
-              assign sub_parts = sub_val
-            else
-              assign sub_parts = sub_parts | append: ', ' | append: sub_val
-            endif
-          endif
-        endfor
-        assign subtitle_str = sub_parts
-      else
-        assign subtitle_str = raw_subtitle.name | default: raw_subtitle.label | default: raw_subtitle.title | default: raw_subtitle.value | default: raw_subtitle
-      endif
-    endif
-
-    assign option_subtitle = block.settings.subtitle | default: subtitle_str
-    if option_subtitle == blank
-      assign p_sets = target_product.metafields.custom.product_sets.value | default: target_product.metafields.custom.product_sets
-      if p_sets != blank
-        assign set_pieces = ''
-        for p in p_sets
-          assign p_name = p.metafields.custom.short_name.value | default: p.title
-          if p_name != blank
-            if set_pieces == ''
-              assign set_pieces = p_name
-            else
-              assign set_pieces = set_pieces | append: ', ' | append: p_name
-            endif
-          endif
-        endfor
-        assign option_subtitle = set_pieces
-      endif
-    endif
-
-    if option_subtitle == blank and target_product.metafields.custom.contents_description.value != blank
-      assign option_subtitle = target_product.metafields.custom.contents_description.value
-    endif
-
-    assign current_page_product = closest.product | default: product
-    assign is_current_product = false
-    if current_page_product != blank and current_page_product.id == target_product.id
-      assign is_current_product = true
-    endif
-
-    # 3. Calculate related product price & compare at price
-    assign current_variant = target_product.selected_or_first_available_variant
-    assign is_available = target_product.available
-    assign product_price = current_variant.price | default: target_product.price
-    assign price_formatted = product_price | money
-
-    assign set_sum_price = 0
-    assign has_piece_sum = false
-    if p_sets.first != blank or p_sets.size > 0
-      for piece_item in p_sets
-        assign piece_var = piece_item.selected_or_first_available_variant
-        assign p_item_price = piece_var.price | default: piece_item.price
-        if p_item_price != blank and p_item_price > 0
-          assign set_sum_price = set_sum_price | plus: p_item_price
-          assign has_piece_sum = true
-        endif
-      endfor
-    endif
-
-    assign compare_price_cents = 0
-    if has_piece_sum and set_sum_price > product_price
-      assign compare_price_cents = set_sum_price
-    elsif target_product.compare_at_price > product_price
-      assign compare_price_cents = target_product.compare_at_price
-    elsif current_variant.compare_at_price > product_price
-      assign compare_price_cents = current_variant.compare_at_price
-    endif
-
-    assign compare_price_formatted = ''
-    if compare_price_cents > product_price
-      assign compare_price_formatted = compare_price_cents | money
-    endif
-  -%}
-
+{%- if sets_variants != blank and sets_variants.size > 0 -%}
   <div class="lux_portrait_block_wrapper" id="lux-portrait-block-{{ block.id }}" {{ block.shopify_attributes }}>
-    {%- if is_current_product -%}
-      <div
-        class="lux_opt lux_portrait_card lux_selected {% unless is_available %}lux_opt_soldout{% endunless %}"
-        aria-current="page"
-      >
-        <span class="lux_opt_radio_indicator" aria-hidden="true"></span>
-        <span class="lux_opt_body">
-          <span class="lux_o_name">{{ option_title }}</span>
-          {%- if option_subtitle != blank -%}
-            <span class="lux_o_contents">{{ option_subtitle }}</span>
-          {%- endif -%}
-        </span>
-        <span class="lux_o_price">
-          {%- if is_available -%}
-            {%- if compare_price_formatted != blank -%}
-              <s class="lux_o_compare_price">{{ compare_price_formatted }}</s>
-            {%- endif -%}
-            <span class="lux_o_final_price">{{ price_formatted }}</span>
-          {%- else -%}
-            <span class="lux_soldout_badge">Sold out</span>
-          {%- endif -%}
-        </span>
-      </div>
-    {%- else -%}
-      <a
-        href="{{ target_product.url }}"
-        class="lux_opt lux_portrait_card {% unless is_available %}lux_opt_soldout{% endunless %}"
-      >
-        <span class="lux_opt_radio_indicator" aria-hidden="true"></span>
-        <span class="lux_opt_body">
-          <span class="lux_o_name">{{ option_title }}</span>
-          {%- if option_subtitle != blank -%}
-            <span class="lux_o_contents">{{ option_subtitle }}</span>
-          {%- endif -%}
-        </span>
-        <span class="lux_o_price">
-          {%- if is_available -%}
-            {%- if compare_price_formatted != blank -%}
-              <s class="lux_o_compare_price">{{ compare_price_formatted }}</s>
-            {%- endif -%}
-            <span class="lux_o_final_price">{{ price_formatted }}</span>
-          {%- else -%}
-            <span class="lux_soldout_badge">Sold out</span>
-          {%- endif -%}
-        </span>
-      </a>
+    {%- if block.settings.heading != blank -%}
+      <div class="lux_sets_variant_heading">{{ block.settings.heading }}</div>
     {%- endif -%}
+
+    <div class="lux_sets_variant_list">
+      {%- for target_product in sets_variants -%}
+        {%- liquid
+          if target_product == blank
+            continue
+          endif
+
+          # 1. Option Title: Product short_name metafield (metaobject, list of metaobjects, or string), fallback to product title
+          assign raw_short_name = target_product.metafields.custom.short_name.value | default: target_product.metafields.custom.short_name
+          assign short_name_str = ''
+          if raw_short_name != blank
+            if raw_short_name.first != blank or raw_short_name.size > 0
+              assign sn_parts = ''
+              for mo in raw_short_name
+                assign mo_val = mo.name | default: mo.label | default: mo.title | default: mo.value | default: mo.short_name | default: mo
+                if mo_val != blank
+                  if sn_parts == ''
+                    assign sn_parts = mo_val
+                  else
+                    assign sn_parts = sn_parts | append: ' + ' | append: mo_val
+                  endif
+                endif
+              endfor
+              assign short_name_str = sn_parts
+            else
+              assign short_name_str = raw_short_name.name | default: raw_short_name.label | default: raw_short_name.title | default: raw_short_name.value | default: raw_short_name.short_name | default: raw_short_name
+            endif
+          endif
+
+          assign option_title = short_name_str
+          if option_title == blank
+            assign option_title = target_product.title
+          endif
+
+          # 2. Description: Subtitle metafield (metaobject, list, or text), fallback to contents summary
+          assign raw_subtitle = target_product.metafields.custom.subtitle.value | default: target_product.metafields.custom.subtitle
+          assign subtitle_str = ''
+          if raw_subtitle != blank
+            if raw_subtitle.first != blank or raw_subtitle.size > 0
+              assign sub_parts = ''
+              for sub_item in raw_subtitle
+                assign sub_val = sub_item.name | default: sub_item.label | default: sub_item.title | default: sub_item.value | default: sub_item
+                if sub_val != blank
+                  if sub_parts == ''
+                    assign sub_parts = sub_val
+                  else
+                    assign sub_parts = sub_parts | append: ', ' | append: sub_val
+                  endif
+                endif
+              endfor
+              assign subtitle_str = sub_parts
+            else
+              assign subtitle_str = raw_subtitle.name | default: raw_subtitle.label | default: raw_subtitle.title | default: raw_subtitle.value | default: raw_subtitle
+            endif
+          endif
+
+          assign option_subtitle = subtitle_str
+          assign p_sets = target_product.metafields.custom.product_sets.value | default: target_product.metafields.custom.product_sets
+          if option_subtitle == blank and p_sets != blank
+            assign set_pieces = ''
+            for p in p_sets
+              assign p_name = p.metafields.custom.short_name.value | default: p.title
+              if p_name != blank
+                if set_pieces == ''
+                  assign set_pieces = p_name
+                else
+                  assign set_pieces = set_pieces | append: ', ' | append: p_name
+                endif
+              endif
+            endfor
+            assign option_subtitle = set_pieces
+          endif
+
+          if option_subtitle == blank and target_product.metafields.custom.contents_description.value != blank
+            assign option_subtitle = target_product.metafields.custom.contents_description.value
+          endif
+
+          assign is_current_product = false
+          if current_page_product != blank and current_page_product.id == target_product.id
+            assign is_current_product = true
+          endif
+
+          # 3. Calculate related product price & compare at price
+          assign current_variant = target_product.selected_or_first_available_variant
+          assign is_available = target_product.available
+          assign product_price = current_variant.price | default: target_product.price
+          assign price_formatted = product_price | money
+
+          assign set_sum_price = 0
+          assign has_piece_sum = false
+          if p_sets.first != blank or p_sets.size > 0
+            for piece_item in p_sets
+              assign piece_var = piece_item.selected_or_first_available_variant
+              assign p_item_price = piece_var.price | default: piece_item.price
+              if p_item_price != blank and p_item_price > 0
+                assign set_sum_price = set_sum_price | plus: p_item_price
+                assign has_piece_sum = true
+              endif
+            endfor
+          endif
+
+          assign compare_price_cents = 0
+          if has_piece_sum and set_sum_price > product_price
+            assign compare_price_cents = set_sum_price
+          elsif target_product.compare_at_price > product_price
+            assign compare_price_cents = target_product.compare_at_price
+          elsif current_variant.compare_at_price > product_price
+            assign compare_price_cents = current_variant.compare_at_price
+          endif
+
+          assign compare_price_formatted = ''
+          if compare_price_cents > product_price
+            assign compare_price_formatted = compare_price_cents | money
+          endif
+        -%}
+
+        {%- if is_current_product -%}
+          <div
+            class="lux_opt lux_portrait_card lux_selected {% unless is_available %}lux_opt_soldout{% endunless %}"
+            aria-current="page"
+          >
+            <span class="lux_opt_radio_indicator" aria-hidden="true"></span>
+            <span class="lux_opt_body">
+              <span class="lux_o_name">{{ option_title }}</span>
+              {%- if option_subtitle != blank -%}
+                <span class="lux_o_contents">{{ option_subtitle }}</span>
+              {%- endif -%}
+            </span>
+            <span class="lux_o_price">
+              {%- if is_available -%}
+                {%- if compare_price_formatted != blank -%}
+                  <s class="lux_o_compare_price">{{ compare_price_formatted }}</s>
+                {%- endif -%}
+                <span class="lux_o_final_price">{{ price_formatted }}</span>
+              {%- else -%}
+                <span class="lux_soldout_badge">Sold out</span>
+              {%- endif -%}
+            </span>
+          </div>
+        {%- else -%}
+          <a
+            href="{{ target_product.url }}"
+            class="lux_opt lux_portrait_card {% unless is_available %}lux_opt_soldout{% endunless %}"
+          >
+            <span class="lux_opt_radio_indicator" aria-hidden="true"></span>
+            <span class="lux_opt_body">
+              <span class="lux_o_name">{{ option_title }}</span>
+              {%- if option_subtitle != blank -%}
+                <span class="lux_o_contents">{{ option_subtitle }}</span>
+              {%- endif -%}
+            </span>
+            <span class="lux_o_price">
+              {%- if is_available -%}
+                {%- if compare_price_formatted != blank -%}
+                  <s class="lux_o_compare_price">{{ compare_price_formatted }}</s>
+                {%- endif -%}
+                <span class="lux_o_final_price">{{ price_formatted }}</span>
+              {%- else -%}
+                <span class="lux_soldout_badge">Sold out</span>
+              {%- endif -%}
+            </span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
   </div>
 
   <style>
     .lux_portrait_block_wrapper {
-      margin: 8px 0;
+      margin: 12px 0;
       width: 100%;
+    }
+    .lux_sets_variant_heading {
+      font-family: var(--lux-display, "Cinzel", Georgia, serif);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--lux-champagne, #C9B48A);
+      margin-bottom: 8px;
+    }
+    .lux_sets_variant_list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .lux_portrait_card {
       display: grid;
@@ -271,7 +302,7 @@
 
           // Strictly scope to this block's variant card links
           const link = e.target.closest('.lux_portrait_block_wrapper .lux_portrait_card[href]');
-          if (!link) return; // Do not touch any other link on the site!
+          if (!link) return;
 
           const targetUrl = link.getAttribute('href');
           if (!targetUrl || targetUrl.startsWith('#') || targetUrl.startsWith('javascript:')) return;
@@ -366,21 +397,10 @@
   "tag": null,
   "settings": [
     {
-      "type": "product",
-      "id": "product",
-      "label": "Product"
-    },
-    {
       "type": "text",
-      "id": "title",
-      "label": "Title Override (Optional)",
-      "info": "Leave blank to use the product's Short Name metafield or Title."
-    },
-    {
-      "type": "text",
-      "id": "subtitle",
-      "label": "Subtitle Override (Optional)",
-      "info": "Leave blank to use the product's Subtitle metafield."
+      "id": "heading",
+      "label": "Heading (Optional)",
+      "info": "Optional title displayed above the options list."
     },
     {
       "type": "checkbox",
