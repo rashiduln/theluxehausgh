@@ -11,6 +11,27 @@
   "sections": {
     "main": {
       "type": "product-bundle",
+      "blocks": {
+        "refills_block": {
+          "type": "refills",
+          "settings": {
+            "button_label": "Add refill to bag"
+          }
+        },
+        "description_block": {
+          "type": "description",
+          "settings": {}
+        },
+        "notes_block": {
+          "type": "notes",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "refills_block",
+        "description_block",
+        "notes_block"
+      ],
       "settings": {
         "default_mood": "{{ product.title }}",
         "default_tone": "#3b2a24",
