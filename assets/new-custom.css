@@ -167,8 +167,8 @@
   align-items: end;
 }
 .shopify-policy__container {
-    width: 1000px;
-    max-width: 1000px; 
+    width: 1000px !important;
+    max-width: 1000px !important; 
 }
 
 .shopify-policy__container h2{
