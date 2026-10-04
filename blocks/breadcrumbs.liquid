@@ -1,0 +1,45 @@
+{% liquid
+  assign product_resource = block.settings.product | default: closest.product | default: product
+  if request.visual_preview_mode and product_resource == blank
+    assign product_resource = collections.all.products.first
+  endif
+
+  assign line = product_resource.metafields.custom.line.value | default: product_resource.metafields.custom.line | default: 'her'
+  assign mood = product_resource.metafields.custom.mood.value | default: product_resource.metafields.custom.mood | default: block.settings.default_mood
+%}
+
+{%- if product_resource != blank -%}
+  <nav class="lux_crumbs" aria-label="Breadcrumbs" {{ block.shopify_attributes }}>
+    <a href="{{ routes.root_url }}">Home</a> /
+    {%- if collection -%}
+      <a href="{{ collection.url }}">{{ collection.title }}</a> / 
+    {%- endif -%} 
+      <span>{{ product_resource.title }}</span> 
+  </nav>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Leave blank to use the parent product in the section."
+    },
+    {
+      "type": "text",
+      "id": "default_mood",
+      "label": "Default Mood Text",
+      "info": "Used if product does not have a mood metafield."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Breadcrumbs"
+    }
+  ]
+}
+{% endschema %}
