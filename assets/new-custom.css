@@ -170,6 +170,10 @@
     width: 1000px;
     max-width: 1000px; 
 }
+
+.shopify-policy__container h2{
+  font-size: 28px; 
+}
 .lux_hero_h1 {
   font-family: var(--lux-text);
   font-weight: 400;
