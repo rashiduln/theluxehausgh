@@ -158,7 +158,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Bourbon Routine.Wash, cream, and mist in one scent.</p>",
+                    "text": "<p>{{ closest.product.metafields.custom.subtitle.value }}</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
