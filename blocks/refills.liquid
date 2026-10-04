@@ -22,12 +22,10 @@
 
   # Collect bundle products from product.metafields.custom.product_sets (list of Product)
   assign p_bundle_sets = product_resource.metafields.custom.product_sets.value | default: product_resource.metafields.custom.product_sets
-  if p_bundle_sets == blank
-    assign p_bundle_sets = product_resource.selected_or_first_available_variant.metafields.custom.product_sets.value | default: product_resource.selected_or_first_available_variant.metafields.custom.product_sets
-  endif
+ 
 -%}
 
-{%- if product_resource != blank -%}
+{%- if p_bundle_sets != blank -%}
   <div class="lux_refill_block_wrapper" id="lux-refill-block-{{ block.id }}" {{ block.shopify_attributes }}>
     <details class="lux_refill" {% if customer_has_bought %}open{% endif %}>
       <summary>
@@ -45,8 +43,7 @@
           {%- endif -%}
         {%- endif -%}
       </summary>
-      <div class="lux_refill_body" style="margin-top: 14px;">
-        {%- if p_bundle_sets.first != blank or p_bundle_sets.size > 0 -%}
+      <div class="lux_refill_body" style="margin-top: 14px;"> 
           <fieldset
             class="lux_portrait_options lux_refill_fieldset"
             id="lux-refill-fieldset-{{ block.id }}"
@@ -114,137 +111,7 @@
                 <span class="lux_o_price">{% if piece_available %}{{ piece_price }}{% else %}Sold out{% endif %}</span>
               </label>
             {%- endfor -%}
-          </fieldset>
-        {%- elsif product_resource.has_only_default_variant == false -%}
-          {%- for variant in product_resource.variants -%}
-            {%- liquid
-              assign is_active_variant = false
-              if variant.id == product_resource.selected_or_first_available_variant.id
-                assign is_active_variant = true
-              endif
-              assign v_sets = variant.metafields.custom.product_sets.value | default: variant.metafields.custom.product_sets
-            -%}
-            <fieldset
-              class="lux_portrait_options lux_refill_fieldset"
-              id="lux-refill-fieldset-{{ variant.id }}"
-              data-variant-id="{{ variant.id }}"
-              {% unless is_active_variant %}style="display: none;"{% endunless %}
-            >
-              <legend class="lux_portrait_legend">Choose a piece</legend>
-              {%- if v_sets.first != blank or v_sets.size > 0 -%}
-                {%- for piece in v_sets -%}
-                  {%- liquid
-                    assign piece_short_name = ''
-                    if piece.metafields.custom.short_name != blank
-                      assign piece_short_name = piece.metafields.custom.short_name.value | default: piece.metafields.custom.short_name
-                    elsif piece.product != blank and piece.product.metafields.custom.short_name != blank
-                      assign piece_short_name = piece.product.metafields.custom.short_name.value | default: piece.product.metafields.custom.short_name
-                    endif
-
-                    if piece_short_name != blank
-                      assign piece_title = piece_short_name
-                    elsif piece.product != blank
-                      if piece.title != blank and piece.title != 'Default Title'
-                        assign piece_title = piece.product.title | append: ' (' | append: piece.title | append: ')'
-                      else
-                        assign piece_title = piece.product.title
-                      endif
-                    elsif piece.title != blank and piece.title != 'Default Title'
-                      assign piece_title = piece.title
-                    elsif piece.name != blank
-                      assign piece_title = piece.name
-                    elsif piece.product_title != blank
-                      assign piece_title = piece.product_title
-                    else
-                      assign piece_title = piece
-                    endif
-
-                    assign piece_variant = piece.selected_or_first_available_variant | default: piece.first_available_variant | default: piece.variants.first | default: piece
-                    assign piece_variant_id = piece_variant.id | default: piece.id | default: piece
-
-                    assign piece_available = true
-                    if piece.available != nil
-                      assign piece_available = piece.available
-                    elsif piece_variant.available != nil
-                      assign piece_available = piece_variant.available
-                    endif
-
-                    assign piece_price = ''
-                    if piece_variant.price != blank and piece_variant.price > 0
-                      assign piece_price = piece_variant.price | money
-                    elsif piece.price != blank and piece.price > 0
-                      assign piece_price = piece.price | money
-                    else
-                      assign piece_price = 'GHS 250'
-                    endif
-                  -%}
-                  <label class="lux_opt {% if forloop.first %}lux_selected{% endif %} {% unless piece_available %}lux_opt_soldout{% endunless %}">
-                    <input
-                      type="radio"
-                      name="lux_refill_piece_{{ variant.id }}"
-                      class="lux_refill_radio"
-                      value="{{ piece_variant_id }}"
-                      data-piece-name="{{ piece_title | escape }}"
-                      data-available="{{ piece_available }}"
-                      {% if forloop.first %}checked{% endif %}
-                      onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');"
-                    >
-                    <span><span class="lux_o_name">{{ piece_title }}</span></span>
-                    <span class="lux_o_price">{% if piece_available %}{{ piece_price }}{% else %}Sold out{% endif %}</span>
-                  </label>
-                {%- endfor -%}
-              {%- else -%}
-                <label class="lux_opt lux_selected">
-                  <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="wash" data-piece-name="Wash" checked onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-                  <span><span class="lux_o_name">Wash</span></span>
-                  <span class="lux_o_price">GHS 250</span>
-                </label>
-                <label class="lux_opt">
-                  <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="cream" data-piece-name="Cream" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-                  <span><span class="lux_o_name">Cream</span></span>
-                  <span class="lux_o_price">GHS 250</span>
-                </label>
-                <label class="lux_opt">
-                  <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="spray" data-piece-name="Mist" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-                  <span><span class="lux_o_name">Mist</span></span>
-                  <span class="lux_o_price">GHS 250</span>
-                </label>
-                <label class="lux_opt">
-                  <input type="radio" name="lux_refill_piece_{{ variant.id }}" class="lux_refill_radio" value="cloth" data-piece-name="Exfoliating cloth" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-                  <span><span class="lux_o_name">Exfoliating cloth</span></span>
-                  <span class="lux_o_price">GHS 100</span>
-                </label>
-              {%- endif -%}
-            </fieldset>
-          {%- endfor -%}
-        {%- else -%}
-          <fieldset
-            class="lux_portrait_options lux_refill_fieldset"
-            id="lux-refill-fieldset-default-{{ block.id }}"
-          >
-            <legend class="lux_portrait_legend">Choose a piece</legend>
-            <label class="lux_opt lux_selected">
-              <input type="radio" name="lux_refill_piece_default_{{ block.id }}" class="lux_refill_radio" value="wash" data-piece-name="Wash" checked onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-              <span><span class="lux_o_name">Wash</span></span>
-              <span class="lux_o_price">GHS 250</span>
-            </label>
-            <label class="lux_opt">
-              <input type="radio" name="lux_refill_piece_default_{{ block.id }}" class="lux_refill_radio" value="cream" data-piece-name="Cream" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-              <span><span class="lux_o_name">Cream</span></span>
-              <span class="lux_o_price">GHS 250</span>
-            </label>
-            <label class="lux_opt">
-              <input type="radio" name="lux_refill_piece_default_{{ block.id }}" class="lux_refill_radio" value="spray" data-piece-name="Mist" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-              <span><span class="lux_o_name">Mist</span></span>
-              <span class="lux_o_price">GHS 250</span>
-            </label>
-            <label class="lux_opt">
-              <input type="radio" name="lux_refill_piece_default_{{ block.id }}" class="lux_refill_radio" value="cloth" data-piece-name="Exfoliating cloth" onchange="this.closest('.lux_refill_fieldset').querySelectorAll('.lux_opt').forEach(el => el.classList.remove('lux_selected')); this.closest('.lux_opt').classList.add('lux_selected');">
-              <span><span class="lux_o_name">Exfoliating cloth</span></span>
-              <span class="lux_o_price">GHS 100</span>
-            </label>
-          </fieldset>
-        {%- endif -%}
+          </fieldset> 
 
         <button type="button" class="lux_btn_line lux_refill_btn" id="lux-refill-btn-{{ block.id }}">
           {{ block.settings.button_label | default: 'Add refill to bag' }}
