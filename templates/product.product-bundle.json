@@ -340,6 +340,17 @@
               },
               "blocks": {}
             },
+            "refills_6AwK4R": {
+              "type": "refills",
+              "name": "Refills Option",
+              "settings": {
+                "product": "{{ closest.product }}",
+                "heading_bought": "Need a refill? Refill individual pieces in [product_title].",
+                "heading_not_bought": "Already have this set? Refill a piece in [product_title].",
+                "button_label": "Add refill to bag"
+              },
+              "blocks": {}
+            },
             "text_6jVAaa": {
               "type": "text",
               "name": "t:names.text",
@@ -355,7 +366,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "text_color": "#A89C8C",
+                "text_color": "#a89c8c",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -399,6 +410,7 @@
             "text_B66rq7",
             "buy_buttons_eYQEYi",
             "divider_VJhene",
+            "refills_6AwK4R",
             "text_6jVAaa",
             "text_aEtTtq"
           ]
