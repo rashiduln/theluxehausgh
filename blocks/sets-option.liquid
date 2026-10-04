@@ -27,104 +27,25 @@
             continue
           endif
 
-          # 1. Option Title: Product short_name metafield (metaobject, list of metaobjects, or string), fallback to product title
-          assign raw_short_name = target_product.metafields.custom.short_name.value | default: target_product.metafields.custom.short_name
-          assign short_name_str = ''
-          if raw_short_name != blank
-            if raw_short_name.first != blank or raw_short_name.size > 0
-              assign sn_parts = ''
-              for mo in raw_short_name
-                assign mo_val = mo.name | default: mo.label | default: mo.title | default: mo.value | default: mo.short_name | default: mo
-                if mo_val != blank
-                  if sn_parts == ''
-                    assign sn_parts = mo_val
-                  else
-                    assign sn_parts = sn_parts | append: ' + ' | append: mo_val
-                  endif
-                endif
-              endfor
-              assign short_name_str = sn_parts
-            else
-              assign short_name_str = raw_short_name.name | default: raw_short_name.label | default: raw_short_name.title | default: raw_short_name.value | default: raw_short_name.short_name | default: raw_short_name
-            endif
-          endif
+          # 1. Option Title: custom.set_title fallback to product title
+          assign option_title = target_product.metafields.custom.set_title.value | default: target_product.metafields.custom.set_title | default: target_product.title
 
-          assign option_title = short_name_str
-          if option_title == blank
-            assign option_title = target_product.title
-          endif
-
-          # 2. Description: Subtitle metafield (metaobject, list, or text), fallback to contents summary
-          assign raw_subtitle = target_product.metafields.custom.subtitle.value | default: target_product.metafields.custom.subtitle
-          assign subtitle_str = ''
-          if raw_subtitle != blank
-            if raw_subtitle.first != blank or raw_subtitle.size > 0
-              assign sub_parts = ''
-              for sub_item in raw_subtitle
-                assign sub_val = sub_item.name | default: sub_item.label | default: sub_item.title | default: sub_item.value | default: sub_item
-                if sub_val != blank
-                  if sub_parts == ''
-                    assign sub_parts = sub_val
-                  else
-                    assign sub_parts = sub_parts | append: ', ' | append: sub_val
-                  endif
-                endif
-              endfor
-              assign subtitle_str = sub_parts
-            else
-              assign subtitle_str = raw_subtitle.name | default: raw_subtitle.label | default: raw_subtitle.title | default: raw_subtitle.value | default: raw_subtitle
-            endif
-          endif
-
-          assign option_subtitle = subtitle_str
-          assign p_sets = target_product.metafields.custom.product_sets.value | default: target_product.metafields.custom.product_sets
-          if option_subtitle == blank and p_sets != blank
-            assign set_pieces = ''
-            for p in p_sets
-              assign p_name = p.metafields.custom.short_name.value | default: p.title
-              if p_name != blank
-                if set_pieces == ''
-                  assign set_pieces = p_name
-                else
-                  assign set_pieces = set_pieces | append: ', ' | append: p_name
-                endif
-              endif
-            endfor
-            assign option_subtitle = set_pieces
-          endif
-
-          if option_subtitle == blank and target_product.metafields.custom.contents_description.value != blank
-            assign option_subtitle = target_product.metafields.custom.contents_description.value
-          endif
+          # 2. Option Subtitle: custom.set_subtitle
+          assign option_subtitle = target_product.metafields.custom.set_subtitle.value | default: target_product.metafields.custom.set_subtitle
 
           assign is_current_product = false
           if current_page_product != blank and current_page_product.id == target_product.id
             assign is_current_product = true
           endif
 
-          # 3. Calculate related product price & compare at price
+          # 3. Prices
           assign current_variant = target_product.selected_or_first_available_variant
           assign is_available = target_product.available
           assign product_price = current_variant.price | default: target_product.price
           assign price_formatted = product_price | money
 
-          assign set_sum_price = 0
-          assign has_piece_sum = false
-          if p_sets.first != blank or p_sets.size > 0
-            for piece_item in p_sets
-              assign piece_var = piece_item.selected_or_first_available_variant
-              assign p_item_price = piece_var.price | default: piece_item.price
-              if p_item_price != blank and p_item_price > 0
-                assign set_sum_price = set_sum_price | plus: p_item_price
-                assign has_piece_sum = true
-              endif
-            endfor
-          endif
-
           assign compare_price_cents = 0
-          if has_piece_sum and set_sum_price > product_price
-            assign compare_price_cents = set_sum_price
-          elsif target_product.compare_at_price > product_price
+          if target_product.compare_at_price > product_price
             assign compare_price_cents = target_product.compare_at_price
           elsif current_variant.compare_at_price > product_price
             assign compare_price_cents = current_variant.compare_at_price
