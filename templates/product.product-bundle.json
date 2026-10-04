@@ -257,6 +257,17 @@
               },
               "blocks": {}
             },
+            "portrait_option_FmPyng": {
+              "type": "portrait-option",
+              "name": "Sets Variant",
+              "settings": {
+                "product": "{{ closest.product }}",
+                "title": "",
+                "subtitle": "",
+                "enable_smooth_transition": true
+              },
+              "blocks": {}
+            },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
               "settings": {
@@ -409,6 +420,7 @@
             "group_icgrde",
             "variant_picker_R3rGDr",
             "text_B66rq7",
+            "portrait_option_FmPyng",
             "buy_buttons_eYQEYi",
             "divider_VJhene",
             "refills_6AwK4R",
@@ -421,7 +433,7 @@
         "disclosures_g9mWze"
       ],
       "custom_css": [
-        "p a{color: #d86119;}"
+        "p a {color: #d86119;}"
       ],
       "settings": {
         "content_width": "content-center-aligned",
