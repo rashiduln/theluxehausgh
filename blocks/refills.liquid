@@ -79,39 +79,20 @@
 
                 if piece_short_name != blank
                   assign piece_title = piece_short_name
-                elsif piece.title != blank and piece.title != 'Default Title'
-                  if piece.product != blank
-                    assign piece_title = piece.product.title | append: ' (' | append: piece.title | append: ')'
-                  else
-                    assign piece_title = piece.title
-                  endif
-                elsif piece.product != blank
-                  assign piece_title = piece.product.title
-                elsif piece.name != blank
-                  assign piece_title = piece.name
-                elsif piece.product_title != blank
-                  assign piece_title = piece.product_title
-                else
-                  assign piece_title = piece
+                elsif piece.title != blank 
+                    assign piece_title = piece.title 
                 endif
 
-                assign piece_variant = piece.selected_or_first_available_variant | default: piece.first_available_variant | default: piece.variants.first | default: piece
-                assign piece_variant_id = piece_variant.id | default: piece.id | default: piece
+                assign piece_variant = piece.selected_or_first_available_variant 
+                assign piece_variant_id = piece_variant.id 
 
-                assign piece_available = true
-                if piece.available != nil
-                  assign piece_available = piece.available
-                elsif piece_variant.available != nil
-                  assign piece_available = piece_variant.available
-                endif
+                assign piece_available = piece.available 
 
                 assign piece_price = ''
-                if piece_variant.price != blank and piece_variant.price > 0
+                if piece_variant.price != blank  
                   assign piece_price = piece_variant.price | money
-                elsif piece.price != blank and piece.price > 0
-                  assign piece_price = piece.price | money
-                else
-                  assign piece_price = 'GHS 250'
+                elsif piece.price != blank  
+                  assign piece_price = piece.price | money 
                 endif
               -%}
               <label class="lux_opt {% if forloop.first %}lux_selected{% endif %} {% unless piece_available %}lux_opt_soldout{% endunless %}">
