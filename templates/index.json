@@ -382,6 +382,7 @@
         "scent_3",
         "scent_4"
       ],
+      "disabled": true,
       "settings": {
         "heading": "Most reordered.",
         "intro": "The scents customers come back for.",
