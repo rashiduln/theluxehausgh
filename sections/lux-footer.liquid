@@ -121,13 +121,34 @@
               <ul class="footer-links">
                 {%- if block.settings.menu != blank -%}
                   {%- for link in linklists[block.settings.menu].links -%}
+                    {%- assign badge_text = '' -%}
+                    {%- assign display_title = link.title -%}
+
+                    {%- comment -%} 1. Check for custom badge in title syntax like 'Title [Badge]' or 'Title | Badge' {%- endcomment -%}
+                    {%- if link.title contains '[' and link.title contains ']' -%}
+                      {%- assign title_parts = link.title | split: '[' -%}
+                      {%- assign display_title = title_parts[0] | strip -%}
+                      {%- assign badge_text = title_parts[1] | remove: ']' | strip -%}
+                    {%- elsif link.title contains '|' -%}
+                      {%- assign title_parts = link.title | split: '|' -%}
+                      {%- assign display_title = title_parts[0] | strip -%}
+                      {%- assign badge_text = title_parts[1] | strip -%}
+                    {%- elsif link.url contains '/collections/' -%}
+                      {%- comment -%} 2. Check for Shopify collection tag filter in URL (e.g. /collections/all/mists-and-sets) {%- endcomment -%}
+                      {%- assign url_clean = link.url | split: '?' | first -%}
+                      {%- assign url_after_collections = url_clean | split: '/collections/' | last -%}
+                      {%- assign path_parts = url_after_collections | split: '/' -%}
+                      {%- if path_parts.size > 1 and path_parts[1] != blank -%}
+                        {%- assign badge_text = path_parts[1] | replace: '-', ' ' | replace: '_', ' ' | capitalize -%}
+                      {%- endif -%}
+                    {%- endif -%}
+ 
+
                     <li>
                       <a href="{{ link.url }}">
-                        {{ link.title }}
-                        {%- if link.title contains 'Her' or link.title contains 'her' -%}
-                          <span class="badge-tag">Mists &amp; Sets</span>
-                        {%- elsif link.title contains 'Him' or link.title contains 'him' -%}
-                          <span class="badge-tag">Body Sprays</span>
+                        {{ display_title }}
+                        {%- if badge_text != blank -%}
+                          <span class="badge-tag">{{ badge_text }}</span>
                         {%- endif -%}
                       </a>
                     </li>
