@@ -41,19 +41,22 @@
         "menu_collections": {
           "type": "menu",
           "settings": {
-            "title": "Collections"
+            "title": "Collections",
+            "menu": "footer-1"
           }
         },
         "menu_experience": {
           "type": "menu",
           "settings": {
-            "title": "Experience"
+            "title": "Experience",
+            "menu": ""
           }
         },
         "menu_client_care": {
           "type": "menu",
           "settings": {
-            "title": "Client Care"
+            "title": "Client Care",
+            "menu": ""
           }
         }
       },
@@ -65,7 +68,23 @@
         "menu_experience",
         "menu_client_care"
       ],
-      "settings": {}
+      "settings": {
+        "show_newsletter": true,
+        "newsletter_tag": "THE PRIVATE DISPATCH",
+        "newsletter_heading": "Receive new scent releases, seasonal notes, and private viewing announcements.",
+        "newsletter_sub": "Delivered quietly. No spam, strictly private allocations and fragrance routine care.",
+        "newsletter_placeholder": "Enter your email address",
+        "newsletter_button_text": "Join the House",
+        "newsletter_success_text": "Thank you. You have been added to the Private Dispatch list.",
+        "show_highlights": true,
+        "brand_text": "Curated fragrance and body care routines, sourced sealed and delivered across Ghana. An online house for now, with a storefront coming.",
+        "whatsapp_label": "WhatsApp: +233 55 910 0626",
+        "whatsapp_url": "",
+        "instagram_label": "Instagram: @theluxehausgh",
+        "instagram_url": "",
+        "location_text": "Accra, Ghana • Nationwide Delivery",
+        "copyright_text": "The Luxé Haus. Luxury is demonstrated, not declared."
+      }
     }
   },
   "order": [
