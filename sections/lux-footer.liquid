@@ -107,6 +107,74 @@
             <span>{{ section.settings.location_text | default: 'Accra, Ghana • Nationwide Delivery' }}</span>
           </div>
         </div>
+
+        {%- comment -%} Language & Currency Localization Selectors {%- endcomment -%}
+        {%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+          <div class="footer-localization-wrap">
+            {%- form 'localization', id: 'lux-footer-localization-form', class: 'footer-localization-form' -%}
+              {%- if section.settings.enable_country_selector and localization.available_countries.size > 0 -%}
+                <div class="localization-select-item">
+                  <label for="FooterCountrySelector-{{ section.id }}" class="visually-hidden">
+                    {{ 'accessibility.country_region' | t | default: 'Country/region' }}
+                  </label>
+                  <div class="lux-select-wrapper">
+                    <svg class="lux-select-globe" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <select
+                      name="country_code"
+                      id="FooterCountrySelector-{{ section.id }}"
+                      class="lux-loc-select"
+                      onchange="this.form.submit()"
+                      aria-label="Country/Region selection"
+                    >
+                      {%- for country in localization.available_countries -%}
+                        <option
+                          value="{{ country.iso_code }}"
+                          {% if country.iso_code == localization.country.iso_code %}selected{% endif %}
+                        >
+                          {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                    <span class="lux-select-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </span>
+                  </div>
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.enable_language_selector and localization.available_languages.size > 0 -%}
+                <div class="localization-select-item">
+                  <label for="FooterLanguageSelector-{{ section.id }}" class="visually-hidden">
+                    {{ 'accessibility.language' | t | default: 'Language' }}
+                  </label>
+                  <div class="lux-select-wrapper">
+                    <svg class="lux-select-globe" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                    <select
+                      name="locale_code"
+                      id="FooterLanguageSelector-{{ section.id }}"
+                      class="lux-loc-select"
+                      onchange="this.form.submit()"
+                      aria-label="Language selection"
+                    >
+                      {%- for language in localization.available_languages -%}
+                        <option
+                          value="{{ language.iso_code }}"
+                          lang="{{ language.iso_code }}"
+                          {% if language.iso_code == localization.language.iso_code %}selected{% endif %}
+                        >
+                          {{ language.endonym_name | default: language.name | capitalize }}
+                        </option>
+                      {%- endfor -%}
+                    </select>
+                    <span class="lux-select-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </span>
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endform -%}
+          </div>
+        {%- endif -%}
       </div>
 
       <!-- Dynamic Menu Column Blocks -->
@@ -187,6 +255,25 @@
     <div class="footer-bottom">
       <div class="footer-copy">
         &copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright_text | default: 'The Luxé Haus. Luxury is demonstrated, not declared.' }}
+      </div>
+      <div class="footer-policies">
+        {%- if section.settings.policy_menu != blank -%}
+          {%- for link in linklists[section.settings.policy_menu].links -%}
+            <a href="{{ link.url }}" class="footer-policy-link">{{ link.title }}</a>
+            {%- unless forloop.last -%}<span class="footer-policy-sep" aria-hidden="true">&bull;</span>{%- endunless -%}
+          {%- endfor -%}
+        {%- elsif shop.policies.size > 0 -%}
+          {%- for policy in shop.policies -%}
+            {%- if policy != blank -%}
+              <a href="{{ policy.url }}" class="footer-policy-link">{{ policy.title | escape }}</a>
+              {%- unless forloop.last -%}<span class="footer-policy-sep" aria-hidden="true">&bull;</span>{%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}" class="footer-policy-link">Privacy Policy</a>
+          <span class="footer-policy-sep" aria-hidden="true">&bull;</span>
+          <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}" class="footer-policy-link">Terms of Service</a>
+        {%- endif -%}
       </div>
     </div>
 
@@ -420,6 +507,76 @@
     flex-shrink: 0;
     color: var(--lux-champagne, #C9B48A);
   }
+
+  /* Footer Localization Selectors */
+  footer.lux_site_footer .footer-localization-wrap {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--lux-rule, rgba(201, 180, 138, 0.22));
+  }
+  footer.lux_site_footer .footer-localization-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  footer.lux_site_footer .lux-select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--lux-panel, #151112);
+    border: 1px solid var(--lux-rule, rgba(201, 180, 138, 0.22));
+    transition: border-color 0.2s ease;
+  }
+  footer.lux_site_footer .lux-select-wrapper:hover {
+    border-color: var(--lux-champagne, #C9B48A);
+  }
+  footer.lux_site_footer .lux-select-globe {
+    position: absolute;
+    left: 12px;
+    color: var(--lux-champagne, #C9B48A);
+    pointer-events: none;
+  }
+  footer.lux_site_footer .lux-select-chevron {
+    position: absolute;
+    right: 12px;
+    color: var(--lux-muted, #A89C8C);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
+  footer.lux_site_footer .lux-loc-select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--lux-ivory, #EDE6DA);
+    font-family: var(--lux-text, "EB Garamond", Georgia, serif);
+    font-size: 15px;
+    padding: 9px 32px 9px 36px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+  }
+  footer.lux_site_footer .lux-loc-select:focus {
+    outline: 2px solid var(--lux-ember, #D8611A);
+    outline-offset: -1px;
+  }
+  footer.lux_site_footer .lux-loc-select option {
+    background-color: #1a1415;
+    color: var(--lux-ivory, #EDE6DA);
+    padding: 8px 12px;
+  }
+  .visually-hidden {
+    position: absolute !important;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    word-wrap: normal !important;
+  }
   footer.lux_site_footer .footer-links {
     list-style: none;
     padding: 0;
@@ -477,6 +634,28 @@
   }
   footer.lux_site_footer .footer-copy {
     color: var(--lux-muted, #A89C8C);
+  }
+  footer.lux_site_footer .footer-policies {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+  footer.lux_site_footer .footer-policy-link {
+    color: var(--lux-muted, #A89C8C);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  footer.lux_site_footer .footer-policy-link:hover {
+    color: var(--lux-ivory, #EDE6DA);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  footer.lux_site_footer .footer-policy-sep {
+    color: var(--lux-rule, rgba(201, 180, 138, 0.4));
+    font-size: 11px;
+    user-select: none;
   }
 
   /* Responsive Mobile View */
@@ -681,6 +860,24 @@
     },
     {
       "type": "header",
+      "content": "Language & Currency Selectors"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "label": "Enable country/currency selector",
+      "info": "To add countries/currencies, configure your Shopify Markets in Admin.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "label": "Enable language selector",
+      "info": "To add languages, configure your Languages in Admin.",
+      "default": true
+    },
+    {
+      "type": "header",
       "content": "Copyright & Footer Note"
     },
     {
@@ -688,6 +885,16 @@
       "id": "copyright_text",
       "label": "Copyright Text",
       "default": "The Luxé Haus. Luxury is demonstrated, not declared."
+    },
+    {
+      "type": "header",
+      "content": "Policies & Legal"
+    },
+    {
+      "type": "link_list",
+      "id": "policy_menu",
+      "label": "Custom Policy Menu",
+      "info": "Leave blank to automatically display standard Shopify policies or Privacy Policy & Terms."
     }
   ],
   "max_blocks": 8,
