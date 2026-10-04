@@ -257,8 +257,8 @@
               },
               "blocks": {}
             },
-            "portrait_option_FmPyng": {
-              "type": "portrait-option",
+            "sets_option_nE6xxx": {
+              "type": "sets-option",
               "name": "Sets Variant",
               "settings": {
                 "product": "{{ closest.product }}",
@@ -420,7 +420,7 @@
             "group_icgrde",
             "variant_picker_R3rGDr",
             "text_B66rq7",
-            "portrait_option_FmPyng",
+            "sets_option_nE6xxx",
             "buy_buttons_eYQEYi",
             "divider_VJhene",
             "refills_6AwK4R",
