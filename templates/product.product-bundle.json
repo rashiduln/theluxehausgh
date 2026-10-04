@@ -355,7 +355,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "text_color": "{{ settings.color_palette.color2 }}",
+                "text_color": "#A89C8C",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
