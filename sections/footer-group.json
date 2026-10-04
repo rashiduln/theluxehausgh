@@ -83,7 +83,10 @@
         "instagram_label": "Instagram: @theluxehausgh",
         "instagram_url": "https://instagram.com/theluxehausgh",
         "location_text": "Accra, Ghana • Nationwide Delivery",
-        "copyright_text": "The Luxé Haus. Luxury is demonstrated, not declared."
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "copyright_text": "The Luxé Haus. Luxury is demonstrated, not declared.",
+        "policy_menu": ""
       }
     }
   },
