@@ -681,6 +681,70 @@
       });
     }
 
+    async function updateThemeCartUI(resData) {
+      try {
+        const cartRes = await fetch('{{ routes.cart_url | append: ".js" }}');
+        if (!cartRes.ok) return;
+        const cart = await cartRes.json();
+        const count = cart.item_count || 0;
+
+        document.querySelectorAll('cart-icon').forEach(icon => {
+          if (typeof icon.renderCartBubble === 'function') {
+            icon.renderCartBubble(count);
+          } else {
+            const countEl = icon.querySelector('[data-testid="cart-bubble-count"], .cart-bubble__count');
+            if (countEl) {
+              countEl.textContent = count < 100 ? String(count) : '';
+              countEl.classList.toggle('hidden', count === 0);
+            }
+            const bubble = icon.querySelector('[data-testid="cart-bubble"], .cart-bubble');
+            if (bubble) bubble.classList.toggle('visually-hidden', count === 0);
+            icon.classList.toggle('header-actions__cart-icon--has-cart', count > 0);
+          }
+        });
+
+        try {
+          sessionStorage.setItem(
+            'cart-count',
+            JSON.stringify({
+              value: String(count),
+              timestamp: Date.now()
+            })
+          );
+        } catch (e) {}
+
+        const drawer = document.querySelector('theme-drawer#cart-drawer');
+        if (drawer) {
+          if (resData && resData.sections && resData.sections['cart-drawer-section']) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(resData.sections['cart-drawer-section'], 'text/html');
+            const newInner = doc.querySelector('.cart-drawer__inner');
+            const currentInner = drawer.querySelector('.cart-drawer__inner');
+            if (newInner && currentInner) {
+              currentInner.innerHTML = newInner.innerHTML;
+              currentInner.className = newInner.className;
+            }
+          }
+        }
+
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
+        window.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart } }));
+
+        if (drawer && typeof drawer.open === 'function') {
+          drawer.open();
+        } else if (window.Shopify?.actions?.openCart) {
+          window.Shopify.actions.openCart();
+        } else {
+          const drawerTrigger = document.querySelector('[data-testid="cart-drawer-trigger"], [aria-controls="cart-drawer"]');
+          if (drawerTrigger && drawerTrigger.getAttribute('aria-expanded') !== 'true') {
+            drawerTrigger.click();
+          }
+        }
+      } catch (err) {
+        console.error('[cart] Error updating cart UI:', err);
+      }
+    }
+
     if (form) {
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -736,15 +800,19 @@
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
               },
-              body: JSON.stringify({ items })
+              body: JSON.stringify({
+                items,
+                sections: ['cart-drawer-section'],
+                sections_url: window.location.pathname
+              })
             });
 
             if (res.ok) {
+              const resData = await res.json();
               if (msgEl) {
                 msgEl.innerHTML = `Set added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
               }
-              document.dispatchEvent(new CustomEvent('cart:updated'));
-              window.dispatchEvent(new CustomEvent('cart:refresh'));
+              await updateThemeCartUI(resData);
             } else {
               const errData = await res.json();
               if (msgEl) {
@@ -816,13 +884,16 @@
                 items: [{
                   id: parseInt(variantId, 10),
                   quantity: 1
-                }]
+                }],
+                sections: ['cart-drawer-section'],
+                sections_url: window.location.pathname
               })
             });
 
             if (res.ok) {
+              const resData = await res.json();
               refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
-              document.dispatchEvent(new CustomEvent('cart:updated'));
+              await updateThemeCartUI(resData);
             } else {
               const errData = await res.json();
               refillMsg.textContent = errData.description || 'Could not add refill to bag.';

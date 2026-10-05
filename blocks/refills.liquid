@@ -121,21 +121,94 @@
 
     <script>
       (function() {
-        const blockEl = document.getElementById('lux-refill-block-{{ block.id }}');
-        if (!blockEl) return;
+        if (window.__luxRefillInit) return;
+        window.__luxRefillInit = true;
 
-        const refillBtn = blockEl.querySelector('.lux_refill_btn');
-        const refillMsg = blockEl.querySelector('.lux_refill_msg');
-        if (!refillBtn || !refillMsg) return;
+        async function updateThemeCartUI(resData) {
+          try {
+            // 1. Fetch latest cart data
+            const cartRes = await fetch('{{ routes.cart_url | append: ".js" }}');
+            if (!cartRes.ok) return;
+            const cart = await cartRes.json();
+            const count = cart.item_count || 0;
 
-        refillBtn.addEventListener('click', async () => {
+            // 2. Update Header Cart Icons and Bubble count
+            document.querySelectorAll('cart-icon').forEach(icon => {
+              if (typeof icon.renderCartBubble === 'function') {
+                icon.renderCartBubble(count);
+              } else {
+                const countEl = icon.querySelector('[data-testid="cart-bubble-count"], .cart-bubble__count');
+                if (countEl) {
+                  countEl.textContent = count < 100 ? String(count) : '';
+                  countEl.classList.toggle('hidden', count === 0);
+                }
+                const bubble = icon.querySelector('[data-testid="cart-bubble"], .cart-bubble');
+                if (bubble) bubble.classList.toggle('visually-hidden', count === 0);
+                icon.classList.toggle('header-actions__cart-icon--has-cart', count > 0);
+              }
+            });
+
+            // Update session storage for cart-icon resilience
+            try {
+              sessionStorage.setItem(
+                'cart-count',
+                JSON.stringify({
+                  value: String(count),
+                  timestamp: Date.now()
+                })
+              );
+            } catch (e) {}
+
+            // 3. Update Cart Drawer contents if sections are returned
+            const drawer = document.querySelector('theme-drawer#cart-drawer');
+            if (drawer) {
+              if (resData && resData.sections && resData.sections['cart-drawer-section']) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(resData.sections['cart-drawer-section'], 'text/html');
+                const newInner = doc.querySelector('.cart-drawer__inner');
+                const currentInner = drawer.querySelector('.cart-drawer__inner');
+                if (newInner && currentInner) {
+                  currentInner.innerHTML = newInner.innerHTML;
+                  currentInner.className = newInner.className;
+                }
+              }
+            }
+
+            // 4. Dispatch standard theme & Shopify events
+            document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
+            window.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart } }));
+
+            // 5. Open Cart Drawer if drawer mode is enabled
+            if (drawer && typeof drawer.open === 'function') {
+              drawer.open();
+            } else if (window.Shopify?.actions?.openCart) {
+              window.Shopify.actions.openCart();
+            } else {
+              const drawerTrigger = document.querySelector('[data-testid="cart-drawer-trigger"], [aria-controls="cart-drawer"]');
+              if (drawerTrigger && drawerTrigger.getAttribute('aria-expanded') !== 'true') {
+                drawerTrigger.click();
+              }
+            }
+          } catch (err) {
+            console.error('[refill] Error updating cart UI:', err);
+          }
+        }
+
+        document.addEventListener('click', async function(e) {
+          const refillBtn = e.target.closest('.lux_refill_btn');
+          if (!refillBtn) return;
+
+          const blockEl = refillBtn.closest('.lux_refill_block_wrapper');
+          if (!blockEl) return;
+
+          const refillMsg = blockEl.querySelector('.lux_refill_msg');
           const visibleFieldset = Array.from(blockEl.querySelectorAll('.lux_refill_fieldset')).find(fs => fs.style.display !== 'none') || blockEl.querySelector('.lux_refill_fieldset');
           const checkedRadio = visibleFieldset ? visibleFieldset.querySelector('input.lux_refill_radio:checked') : null;
           if (!checkedRadio) return;
 
           const pieceName = checkedRadio.dataset.pieceName || checkedRadio.closest('.lux_opt')?.querySelector('.lux_o_name')?.textContent || 'Refill';
           if (checkedRadio.dataset.available === 'false') {
-            refillMsg.textContent = `${pieceName} is currently sold out.`;
+            if (refillMsg) refillMsg.textContent = `${pieceName} is currently sold out.`;
             return;
           }
 
@@ -158,25 +231,28 @@
                   items: [{
                     id: parseInt(variantId, 10),
                     quantity: 1
-                  }]
+                  }],
+                  sections: ['cart-drawer-section'],
+                  sections_url: window.location.pathname
                 })
               });
 
               if (res.ok) {
-                refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
-                document.dispatchEvent(new CustomEvent('cart:updated'));
+                const resData = await res.json();
+                if (refillMsg) refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+                await updateThemeCartUI(resData);
               } else {
                 const errData = await res.json();
-                refillMsg.textContent = errData.description || 'Could not add refill to bag.';
+                if (refillMsg) refillMsg.textContent = errData.description || errData.message || 'Could not add refill to bag.';
               }
             } catch (err) {
-              refillMsg.textContent = 'Error adding refill to bag.';
+              if (refillMsg) refillMsg.textContent = 'Error adding refill to bag.';
             } finally {
               refillBtn.disabled = false;
               refillBtn.textContent = origText;
             }
           } else {
-            refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
+            if (refillMsg) refillMsg.innerHTML = `${pieceName} refill added to your bag. <a href="{{ routes.cart_url }}">View bag</a>`;
             refillBtn.disabled = false;
             refillBtn.textContent = origText;
           }

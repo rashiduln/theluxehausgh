@@ -217,6 +217,20 @@
         if (window.__luxSetsVariantTransitionInit) return;
         window.__luxSetsVariantTransitionInit = true;
 
+        const executeScriptsInContainer = function(container) {
+          if (!container) return;
+          const scripts = container.querySelectorAll('script');
+          scripts.forEach(function(oldScript) {
+            if (oldScript.type && oldScript.type !== 'text/javascript' && oldScript.type !== 'module' && oldScript.type !== '') return;
+            const newScript = document.createElement('script');
+            Array.from(oldScript.attributes).forEach(function(attr) {
+              newScript.setAttribute(attr.name, attr.value);
+            });
+            newScript.textContent = oldScript.textContent;
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+          });
+        };
+
         document.addEventListener('click', async function(e) {
           // Allow opening in new tab via Cmd/Ctrl/Shift/Middle-click
           if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
@@ -262,16 +276,19 @@
 
               const newProductSection = doc.querySelector('.section[data-testid*="product"]') || doc.querySelector('.product-information') || doc.querySelector('.lux_product_main') || doc.querySelector('main');
               
+              let swappedTarget = null;
               if (newProductSection && productSection) {
                 productSection.innerHTML = newProductSection.innerHTML;
                 Array.from(newProductSection.attributes).forEach(function(attr) {
                   productSection.setAttribute(attr.name, attr.value);
                 });
+                swappedTarget = productSection;
               } else {
                 const currentMain = document.querySelector('main');
                 const newMain = doc.querySelector('main');
                 if (currentMain && newMain) {
                   currentMain.innerHTML = newMain.innerHTML;
+                  swappedTarget = currentMain;
                 } else {
                   window.location.href = targetUrl;
                   return;
@@ -284,6 +301,11 @@
               if (productSection) {
                 productSection.style.opacity = '1';
                 productSection.style.pointerEvents = '';
+              }
+
+              // Re-execute scripts inside swapped container
+              if (swappedTarget) {
+                executeScriptsInContainer(swappedTarget);
               }
 
               // Re-dispatch events for theme scripts
