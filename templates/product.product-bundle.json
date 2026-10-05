@@ -261,10 +261,8 @@
               "type": "sets-option",
               "name": "Sets Variant",
               "settings": {
-                "product": "{{ closest.product }}",
-                "title": "",
-                "subtitle": "",
-                "enable_smooth_transition": true
+                "heading": "Choose your portrait",
+                "enable_smooth_transition": false
               },
               "blocks": {}
             },
