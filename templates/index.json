@@ -234,7 +234,7 @@
               "type": "_product-card-gallery",
               "name": "t:names.product_card_media",
               "settings": {
-                "image_ratio": "adapt",
+                "image_ratio": "square",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
@@ -662,8 +662,7 @@
       "settings": {
         "heading": "The part of the routine that does the work.",
         "description": "Our exfoliating cloth is woven net, finished with African print. It clears the skin before the wash, so everything after it lands better. It comes in every Elevated and Signature set, and it's the first piece that carries our own name.",
-        "muted_note": "Rinse after use and hang to dry. Replace every three months.",
-        "custom_image": "shopify://shop_images/vanilla-ease-set.png"
+        "muted_note": "Rinse after use and hang to dry. Replace every three months."
       }
     },
     "section_itjNiB": {
@@ -672,7 +671,6 @@
         "image_nrgHRd": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/old-spice-cedarwood-signature-16oz_a9cffb15-b9c4-419c-af18-8cf9883e0965.png",
             "link": "",
             "image_ratio": "square",
             "width": "fill",
@@ -1218,7 +1216,6 @@
         "image_JTWPih": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/old-spice-cedarwood-signature-16oz_a9cffb15-b9c4-419c-af18-8cf9883e0965.png",
             "link": "",
             "image_ratio": "square",
             "width": "fill",
