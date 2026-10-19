@@ -12,4 +12,4 @@
     </select>
     </label>
 <p class="lh-area__hint">Outside Accra? Choose the last option and we will send your order to your nearest VIP station.</p></div>
-<script>
+<script> window.lhSetArea = window.lhSetArea || function (v) { document.querySelectorAll('.lh-area__select').forEach(function (s) { s.value = v; }); fetch(window.Shopify.routes.root + 'cart/update.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ attributes: { 'Delivery area': v } }) }); }; </>
