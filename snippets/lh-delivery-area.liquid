@@ -12,4 +12,10 @@
     </select>
     </label>
 <p class="lh-area__hint">Outside Accra? Choose the last option and we will send your order to your nearest VIP station.</p></div>
-<script> window.lhSetArea = window.lhSetArea || function (v) { document.querySelectorAll('.lh-area__select').forEach(function (s) { s.value = v; }); fetch(window.Shopify.routes.root + 'cart/update.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ attributes: { 'Delivery area': v } }) }); }; </>
+<script> window.lhSetArea = window.lhSetArea || function (v) { document.querySelectorAll('.lh-area__select').forEach(function (s) { s.value = v; }); fetch(window.Shopify.routes.root + 'cart/update.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ attributes: { 'Delivery area': v } }) }); }; </script>
+<style>
+.lh-area { display: flex; flex-direction: column; gap: 6px; margin-block-end: 12px; }
+.lh-area__label { display: flex; flex-direction: column; gap: 6px; font-size: 0.9em; }
+.lh-area__select { width: 100%; padding: 12px; border: 1px solid rgb(var(--color-foreground-rgb, 0 0 0) / 0.3); border-radius: 4px; background: transparent; color: inherit; font: inherit; }
+.lh-area__hint { margin: 0; font-size: 0.8em; opacity: 0.75; }
+</style>
