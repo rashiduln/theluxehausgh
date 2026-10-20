@@ -671,6 +671,7 @@
         "image_nrgHRd": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/LH_Men_Bone_Exfoliating_Cloth_Espresso_BG_v01.png",
             "link": "",
             "image_ratio": "square",
             "width": "fill",
@@ -733,7 +734,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>The part of the routine that does the work.</h2>",
+                "text": "<h2>The piece that does the work first.</h2>",
                 "width": "100%",
                 "max_width": "none",
                 "alignment": "left",
@@ -758,7 +759,7 @@
             "text_UEDqnx": {
               "type": "text",
               "settings": {
-                "text": "<p>Our exfoliating cloth is woven net, finished with African print. It clears the skin before the wash, so everything after it lands better. It comes in every Elevated and Signature set, and it's the first piece that carries our own name.</p>",
+                "text": "<p>Woven net, finished with African print. It clears the skin before the wash, so everything after it lands better. It comes in every Poised, Refined, and Distinguished set, and it's the first piece that carries our own name.</p>",
                 "width": "fit-content",
                 "max_width": "none",
                 "alignment": "left",
@@ -851,32 +852,6 @@
     "product_list_eBpBJC": {
       "type": "product-list",
       "blocks": {
-        "text_8r9yU9": {
-          "type": "text",
-          "name": "t:names.text",
-          "settings": {
-            "text": "<p>The Distinguished Gentleman in Mahogany Teakwood and The Distinguished Woman in Champagne Toast. His warm and deep, hers bright. Two scents made to stand next to each other.</p>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "custom",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "text_color": "#a89c8c",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "static-header": {
           "type": "_product-list-content",
           "name": "t:names.header",
@@ -1152,12 +1127,9 @@
           ]
         }
       },
-      "block_order": [
-        "text_8r9yU9"
-      ],
       "name": "t:names.products_carousel",
       "settings": {
-        "collection": "bundle-products",
+        "collection": "the-distinguished-pair",
         "layout_type": "carousel",
         "carousel_on_mobile": false,
         "max_products": 6,
